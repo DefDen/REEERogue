@@ -4,7 +4,15 @@ public class TestClass
 {
 	public static void main (String[] args)
 	{
-		ellipse();
+		System.out.print(min(1,2,3));
+	}
+	public static int min(int x, int y, int z)
+	{
+		return Math.min(Math.min(x, y), z);
+	}
+	public static int max(int x, int y, int z)
+	{
+		return Math.max(Math.max(x, y), z);
 	}
 	public static void ellipse()
 	{
@@ -46,7 +54,6 @@ public class TestClass
 			System.out.println();
 		}
 	}
-	
 	public static void diamond()
 	{
 		for (int x = 1; x != 6; x++)
