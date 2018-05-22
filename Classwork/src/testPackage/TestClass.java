@@ -4,7 +4,11 @@ public class TestClass
 {
 	public static void main (String[] args)
 	{
-		System.out.print(min(1,2,3));
+		System.out.print(getPlusOne(1++));
+	}
+	public static int getPlusOne(int x)
+	{
+		return x++;
 	}
 	public static int min(int x, int y, int z)
 	{
