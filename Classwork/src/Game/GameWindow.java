@@ -37,7 +37,7 @@ public class GameWindow
 			}
 			@Override
 			public void keyReleased(KeyEvent event) 
-			{
+			{	
 			}
 			@Override
 			public void keyTyped(KeyEvent event)
