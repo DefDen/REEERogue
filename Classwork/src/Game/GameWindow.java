@@ -39,6 +39,14 @@ public class GameWindow
 		panel.add(text, BorderLayout.PAGE_END);
 		window.pack();
 		window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+		try
+		{
+			loadLevel(new File("C:\\Users\\s-jouv\\Desktop\\a.txt\\"));
+		}
+		catch(FileNotFoundException e)
+		{
+			System.out.print("Error: Cannot load floor");
+		}
 	}
 
 	private void loadLevel(File floorFile) throws FileNotFoundException
@@ -83,14 +91,27 @@ public class GameWindow
 		window.setVisible(true);
 	}
 
-	public void ifA(char x)
+	private void ifA(char x)
 	{
 		if(x == 'a')
 			System.out.println("It's a A");
 	}
+	
+	public void printFloor()
+	{
+		for(int x = 0; x < floor.length; x++)
+		{
+			for(int y = 0; y < floor[x].length; y++)
+			{
+				System.out.print(floor[x][y]);
+			}
+			System.out.println();
+		}
+	}
 
-	public static void main(String args[])
+	public static void main(String args[]) throws FileNotFoundException
 	{
 		GameWindow g = new GameWindow();
+		g.printFloor();
 	}
 }
