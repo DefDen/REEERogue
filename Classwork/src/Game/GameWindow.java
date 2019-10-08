@@ -40,7 +40,7 @@ public class GameWindow
 		window.pack();
 		window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 		try
-		{
+		{	
 			loadLevel(new File("C:\\Users\\s-jouv\\Desktop\\a.txt\\"));
 		}
 		catch(FileNotFoundException e)
@@ -97,21 +97,23 @@ public class GameWindow
 			System.out.println("It's a A");
 	}
 	
-	public void printFloor()
+	public String floorToString()
 	{
+		String strFloor = "";
 		for(int x = 0; x < floor.length; x++)
 		{
 			for(int y = 0; y < floor[x].length; y++)
 			{
-				System.out.print(floor[x][y]);
+				strFloor += floor[x][y];
 			}
-			System.out.println();
+			strFloor += "\n";
 		}
+		return strFloor;
 	}
 
 	public static void main(String args[]) throws FileNotFoundException
 	{
 		GameWindow g = new GameWindow();
-		g.printFloor();
+		System.out.print(g.floorToString());
 	}
 }
