@@ -28,17 +28,6 @@ public class GameWindow
 	public GameWindow()
 	{
 		makeWindow();
-		JLabel label = new JLabel("Test", SwingConstants.CENTER);
-		JLabel label2 = new JLabel("Test2", SwingConstants.CENTER);
-		label.setVerticalAlignment(SwingConstants.TOP);
-		JTextField text = makeJTextField();
-		JPanel panel = new JPanel(new BorderLayout());
-		window.add(panel);
-		panel.add(label, BorderLayout.PAGE_START);
-		panel.add(label2, BorderLayout.LINE_START);
-		panel.add(text, BorderLayout.PAGE_END);
-		window.pack();
-		window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 		try
 		{	
 			loadLevel(new File("C:\\Users\\s-jouv\\Desktop\\a.txt\\"));
@@ -47,6 +36,15 @@ public class GameWindow
 		{
 			System.out.print("Error: Cannot load floor");
 		}
+		JLabel floorLabel = new JLabel(floorToString(), SwingConstants.CENTER);
+		JTextField text = makeJTextField();
+		JPanel panel = new JPanel(new BorderLayout());
+		window.add(panel);
+		panel.add(floorLabel, BorderLayout.PAGE_START);
+		panel.add(text, BorderLayout.PAGE_END);
+		window.pack();
+		window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+		
 	}
 
 	private void loadLevel(File floorFile) throws FileNotFoundException
@@ -99,18 +97,19 @@ public class GameWindow
 	
 	public String floorToString()
 	{
-		String strFloor = "";
+		String strFloor = "<html>";
 		for(int x = 0; x < floor.length; x++)
 		{
 			for(int y = 0; y < floor[x].length; y++)
 			{
 				strFloor += floor[x][y];
 			}
-			strFloor += "\n";
+			strFloor += "\n<br/>";
 		}
+		strFloor += "<html>";
 		return strFloor;
 	}
-
+	
 	public static void main(String args[]) throws FileNotFoundException
 	{
 		GameWindow g = new GameWindow();
