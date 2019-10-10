@@ -7,4 +7,12 @@ public class Player extends GameObject
 		id = '@';
 		character = true;
 	}
+	
+	public Player(int x, int y)
+	{
+		id = '@';
+		character = true;
+		this.x = x;
+		this.y = y;
+	}
 }

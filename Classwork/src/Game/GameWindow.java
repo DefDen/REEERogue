@@ -21,9 +21,10 @@ import javax.swing.SwingConstants;
 public class GameWindow 
 {
 	private JFrame window;
-	private static final int WINDOW_WIDTH = 300, WINDOW_HEIGHT = 300;
+	private static final int WINDOW_WIDTH = 600, WINDOW_HEIGHT = 450;
 	private char[][] floor = new char[21][79];
-	private Stack<String> moveHistory = new Stack<String>();
+	private GameManager GM = new GameManager();
+	private JLabel floorLabel;
 
 	public GameWindow()
 	{
@@ -36,7 +37,7 @@ public class GameWindow
 		{
 			System.out.print("Error: Cannot load floor");
 		}
-		JLabel floorLabel = new JLabel(floorToString(), SwingConstants.CENTER);
+		floorLabel = new JLabel(floorToString(), SwingConstants.CENTER);
 		JTextField text = makeJTextField();
 		JPanel panel = new JPanel(new BorderLayout());
 		window.add(panel);
@@ -54,6 +55,7 @@ public class GameWindow
 		{
 			floor[x] = scan.nextLine().toCharArray();
 		}
+		GM.updateFloor(floor);
 	}
 	
 	private JTextField makeJTextField()
@@ -65,9 +67,10 @@ public class GameWindow
 			@Override
 			public void keyPressed(KeyEvent event)
 			{
-				ifA(event.getKeyChar());
-				moveHistory.add("" + event.getKeyChar());
+				GM.playerMove(event.getKeyChar());
 				text.setText("");
+				floor = GM.getUpdatedFloor();
+				floorLabel.setText(floorToString());
 			}
 			@Override
 			public void keyReleased(KeyEvent event) 

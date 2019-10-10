@@ -3,6 +3,8 @@ package Game;
 public class GameManager 
 {
 	private GameObject[][] floor = new GameObject[21][79];
+	private int playerX;
+	private int playerY;
 
 	public void updateFloor(char[][] floor)
 	{
@@ -11,6 +13,11 @@ public class GameManager
 			for(int y = 0; y < floor[x].length; y++)
 			{
 				this.floor[x][y] = charToGameObject(floor[x][y]);
+				if(floor[x][y] == '@')
+				{
+					playerX = x;
+					playerY = y;
+				}
 			}
 		}
 	}
@@ -33,18 +40,27 @@ public class GameManager
 		switch(c)
 		{
 			case 'w':
-				
+				floor[playerY + 1][playerX] = floor[playerY][playerX];
+				floor[playerY][playerX] = new EmptySpace();
+				playerY++;
 				break;
-			case 'a':
 				
+			case 'a':
+				floor[playerY][playerX - 1] = floor[playerY][playerX];
+				floor[playerY][playerX] = new EmptySpace();
+				playerX--;
 				break;
 				
 			case 's':
-				
+				floor[playerY - 1][playerX] = floor[playerY][playerX];
+				floor[playerY][playerX] = new EmptySpace();
+				playerY--;
 				break;
 				
 			case 'd':
-			
+				floor[playerY][playerX + 1] = floor[playerY][playerX];
+				floor[playerY][playerX] = new EmptySpace();
+				playerX++;
 				break;
 		}
 		return "a";
