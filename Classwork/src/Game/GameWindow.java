@@ -23,11 +23,12 @@ public class GameWindow
 	private JFrame window;
 	private static final int WINDOW_WIDTH = 600, WINDOW_HEIGHT = 450;
 	private char[][] floor = new char[21][79];
-	private GameManager GM = new GameManager();
+	private GameManager GM;
 	private JLabel floorLabel;
 
-	public GameWindow()
+	public GameWindow(GameManager GM)
 	{
+		this.GM = GM;
 		makeWindow();
 		loadLevel("a");
 		JTextField text = makeJTextField();
@@ -131,6 +132,6 @@ public class GameWindow
 	
 	public static void main(String args[]) throws FileNotFoundException
 	{
-		GameWindow g = new GameWindow();
+		GameManager GM = new GameManager();
 	}
 }

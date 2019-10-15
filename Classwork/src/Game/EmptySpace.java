@@ -4,7 +4,7 @@ public class EmptySpace extends GameObject
 {
 	public EmptySpace()
 	{
-		id = 'a';
+		id = '.';
 		emptySpace = true;
 	}
 }
