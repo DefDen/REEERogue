@@ -61,7 +61,9 @@ public class GameManager
 			case '4':
 				r = move(0, -1);
 				break;
-			
+			case '5':
+				r = move(0, 0);
+				break;
 			case '6':
 				r = move(0, 1);
 				break;
@@ -83,6 +85,10 @@ public class GameManager
 
 	private String move(int y, int x)
 	{
+		if(y == 0 && x == 0)
+		{
+			return "You walk into yourself";
+		}
 		if((y > 0 && playerY == floor.length - 1) || (y < 0 && playerY == 0) || (x > 0 && playerX == floor[0].length - 1) || (x < 0 && playerX == 0))
 		{
 			return "You walk into the wall";

@@ -3,6 +3,7 @@ package Game;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Stack;
 import java.awt.BorderLayout;
@@ -25,6 +26,8 @@ public class GameWindow
 	private char[][] floor = new char[21][79];
 	private GameManager GM;
 	private JLabel floorLabel;
+	private JLabel messageLabel = new JLabel();
+	private ArrayList<String> messages = new ArrayList<String>();
 
 	public GameWindow(GameManager GM)
 	{
@@ -33,8 +36,13 @@ public class GameWindow
 		loadLevel("a");
 		JTextField text = makeJTextField();
 		JPanel panel = new JPanel(new BorderLayout());
+		for(int x = 0; x < 1; x++)
+		{
+			messages.add("");
+		}
 		window.add(panel);
-		panel.add(floorLabel, BorderLayout.PAGE_START);
+		panel.add(messageLabel, BorderLayout.PAGE_START);
+		panel.add(floorLabel, BorderLayout.CENTER);
 		panel.add(text, BorderLayout.PAGE_END);
 		window.pack();
 		window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -72,7 +80,7 @@ public class GameWindow
 			@Override
 			public void keyPressed(KeyEvent event)
 			{
-				GM.playerMove(event.getKeyChar());
+				updateMessage(GM.playerMove(event.getKeyChar()));
 				text.setText("");
 				floor = GM.getUpdatedFloor();
 				floorLabel.setText(floorToString());
@@ -90,6 +98,18 @@ public class GameWindow
 		return text;
 	}
 
+	private void updateMessage(String message)
+	{
+		messages.add(message);
+		String curMessage = "<html><font face=\"monospace\"";
+		for(int x = 2; x > 0; x--)
+		{
+			curMessage += messages.get(messages.size() - x) + "<br/>";
+		}
+		curMessage += "<html>";
+		messageLabel.setText(curMessage);
+	}
+	
 	private void makeWindow()
 	{
 		window = new JFrame("REEERogue");
