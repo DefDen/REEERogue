@@ -36,9 +36,9 @@ public class GameWindow
 		loadLevel("a");
 		JTextField text = makeJTextField();
 		JPanel panel = new JPanel(new BorderLayout());
-		for(int x = 0; x < 1; x++)
+		for(int x = 0; x < 2; x++)
 		{
-			messages.add("");
+			messages.add("<p style=\"color:#ffffff\"> a");
 		}
 		window.add(panel);
 		panel.add(messageLabel, BorderLayout.PAGE_START);
@@ -60,7 +60,7 @@ public class GameWindow
 			System.out.print("Error: Cannot load floor");
 		}
 	}
-	
+
 	private void loadLevel(File floorFile) throws FileNotFoundException
 	{
 		Scanner scan = new Scanner(floorFile);
@@ -70,7 +70,7 @@ public class GameWindow
 		}
 		GM.updateFloor(floor);
 	}
-	
+
 	private JTextField makeJTextField()
 	{
 		JTextField text = new JTextField("Is it a A?");
@@ -101,15 +101,29 @@ public class GameWindow
 	private void updateMessage(String message)
 	{
 		messages.add(message);
-		String curMessage = "<html><font face=\"monospace\"";
-		for(int x = 2; x > 0; x--)
+		String curMessage = "<html><font face=\"monospace\"\n<br>";
+		for(int x = 3; x > 0; x--)
 		{
-			curMessage += messages.get(messages.size() - x) + "<br/>";
+			switch(x)
+			{
+				case 1:
+					curMessage += "<p style=\"color:#000000\">";
+					break;
+					
+				case 2:
+					curMessage += "<p style=\"color:#808080\">";
+					break;
+					
+				case 3:
+					curMessage += "<p style=\"color:#b3b3b3\">";
+					break;
+			}
+			curMessage += messages.get(messages.size() - x) + "\n<br>";
 		}
 		curMessage += "<html>";
 		messageLabel.setText(curMessage);
 	}
-	
+
 	private void makeWindow()
 	{
 		window = new JFrame("REEERogue");
@@ -122,7 +136,7 @@ public class GameWindow
 		if(x == 'a')
 			System.out.println("It's a A");
 	}
-	
+
 	public String floorToString()
 	{
 		String strFloor = "<html><font face=\"monospace\"";
@@ -132,12 +146,12 @@ public class GameWindow
 			{
 				strFloor += floor[x][y];
 			}
-			strFloor += "\n<br/>";
+			strFloor += "\n<br>";
 		}
 		strFloor += "<html>";
 		return strFloor;
 	}
-	
+
 	public void printSample()
 	{
 		for(int x = 0; x < floor.length; x++)
@@ -149,7 +163,7 @@ public class GameWindow
 			System.out.println();
 		}
 	}
-	
+
 	public static void main(String args[]) throws FileNotFoundException
 	{
 		GameManager GM = new GameManager();
