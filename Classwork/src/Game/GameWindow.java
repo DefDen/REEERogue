@@ -22,7 +22,7 @@ import javax.swing.SwingConstants;
 public class GameWindow 
 {
 	private JFrame window;
-	private static final int WINDOW_WIDTH = 600, WINDOW_HEIGHT = 450;
+	private static final int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
 	private char[][] floor = new char[21][79];
 	private GameManager GM;
 	private JLabel floorLabel;
@@ -38,8 +38,9 @@ public class GameWindow
 		JPanel panel = new JPanel(new BorderLayout());
 		for(int x = 0; x < 2; x++)
 		{
-			messages.add("<p style=\"color:#ffffff\"> a");
+			messages.add("a");
 		}
+		updateMessage("a");
 		window.add(panel);
 		panel.add(messageLabel, BorderLayout.PAGE_START);
 		panel.add(floorLabel, BorderLayout.CENTER);
@@ -104,19 +105,26 @@ public class GameWindow
 		String curMessage = "<html><font face=\"monospace\"\n<br>";
 		for(int x = 3; x > 0; x--)
 		{
-			switch(x)
+			if(messages.get(messages.size() - x).equals("a"))
 			{
+				curMessage += "<p style=\"color:#ffffff\">";
+			}
+			else
+			{
+				switch(x)
+				{
 				case 1:
 					curMessage += "<p style=\"color:#000000\">";
 					break;
-					
+
 				case 2:
 					curMessage += "<p style=\"color:#808080\">";
 					break;
-					
+
 				case 3:
 					curMessage += "<p style=\"color:#b3b3b3\">";
 					break;
+				}
 			}
 			curMessage += messages.get(messages.size() - x) + "\n<br>";
 		}
