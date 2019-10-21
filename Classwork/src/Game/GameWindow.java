@@ -74,7 +74,7 @@ public class GameWindow
 
 	private JTextField makeJTextField()
 	{
-		JTextField text = new JTextField("Is it a A?");
+		JTextField text = new JTextField("Is it a A N WORD?");
 		text.setBounds(100, 0, 25, 10);
 		KeyListener listener = new KeyListener()
 		{
@@ -154,7 +154,7 @@ public class GameWindow
 			{
 				strFloor += floor[x][y];
 			}
-			strFloor += "\n<br>";
+			strFloor += "<br>";
 		}
 		strFloor += "<html>";
 		return strFloor;
