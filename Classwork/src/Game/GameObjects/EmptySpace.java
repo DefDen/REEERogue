@@ -1,4 +1,6 @@
-package Game;
+package Game.GameObjects;
+
+import Game.GameObject;
 
 public class EmptySpace extends GameObject
 {

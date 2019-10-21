@@ -1,5 +1,9 @@
 package Game;
 
+import Game.GameObjects.EmptySpace;
+import Game.GameObjects.Player;
+import Game.GameObjects.Wall;
+
 public class GameManager 
 {
 	private GameWindow GW;
@@ -89,9 +93,15 @@ public class GameManager
 		{
 			return "You walk into yourself";
 		}
+		//Hits outer border
 		if((y > 0 && playerY == floor.length - 1) || (y < 0 && playerY == 0) || (x > 0 && playerX == floor[0].length - 1) || (x < 0 && playerX == 0))
 		{
 			return "You walk into the wall";
+		}
+		//Hits terrain
+		if(floor[playerY + y][playerX + x].isTerrain())
+		{
+			return "You walk into the " + floor[playerY + y][playerX + x].getName().toLowerCase();
 		}
 		floor[playerY + y][playerX + x] = floor[playerY][playerX];
 		floor[playerY][playerX] = new EmptySpace();
@@ -106,6 +116,10 @@ public class GameManager
 		{
 			case '@':
 				return new Player();
+				
+			case '#':
+				return new Wall();
+				
 			default:
 				return new EmptySpace();
 		}

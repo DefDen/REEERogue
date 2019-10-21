@@ -3,6 +3,7 @@ package Game;
 public abstract class GameObject 
 {
 	protected char id;
+	protected String name;
 	protected int x;
 	protected int y;
 	protected boolean terrain = false;
@@ -13,6 +14,10 @@ public abstract class GameObject
 	public char toChar()
 	{
 		return id;
+	}
+	public String getName()
+	{
+		return name;
 	}
 	public int getX()
 	{
