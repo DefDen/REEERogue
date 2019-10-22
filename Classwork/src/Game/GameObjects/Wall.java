@@ -7,6 +7,6 @@ public class Wall extends Terrain
 	public Wall()
 	{
 		id = '#';
-		name = "Wall";
+		name = "wall";
 	}
 }

@@ -101,7 +101,12 @@ public class GameManager
 		//Hits terrain
 		if(floor[playerY + y][playerX + x].isTerrain())
 		{
-			return "You walk into the " + floor[playerY + y][playerX + x].getName().toLowerCase();
+			return "You walk into the " + floor[playerY + y][playerX + x].getName();
+		}
+		//Attacking character
+		if(floor[playerY + y][playerX + x].isCharacter())
+		{
+			return "You hit the " + floor[playerY + y][playerX + x].getName();
 		}
 		floor[playerY + y][playerX + x] = floor[playerY][playerX];
 		floor[playerY][playerX] = new EmptySpace();

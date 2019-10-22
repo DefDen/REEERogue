@@ -137,7 +137,7 @@ public class GameWindow
 
 	private void ifA(char x)
 	{
-		if(x == 'a')
+		if(x == 'a') 
 			System.out.println("It's a A");
 	}
 
