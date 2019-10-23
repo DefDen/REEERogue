@@ -4,8 +4,7 @@ public abstract class GameObject
 {
 	protected char id;
 	protected String name;
-	protected int x;
-	protected int y;
+	protected int x, y;
 	protected boolean terrain = false;
 	protected boolean item = false;
 	protected boolean character = false;

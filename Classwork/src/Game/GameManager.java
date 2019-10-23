@@ -6,14 +6,24 @@ import Game.GameObjects.Wall;
 
 public class GameManager 
 {
+	private static final int floorWidth = 21, floorHeight = 79;
 	private GameWindow GW;
-	private GameObject[][] floor = new GameObject[21][79];
-	private int playerX;
-	private int playerY;
+	private GameObject[][] floor = new GameObject[floorWidth][floorHeight];
+	private int playerX, playerY;
 
 	public GameManager()
 	{
 		GW = new GameWindow(this);
+	}
+	
+	public int getFloorWidth()
+	{
+		return floorWidth;
+	}
+	
+	public int getFloorHeight()
+	{
+		return floorHeight;
 	}
 	
 	public void updateFloor(char[][] floor)
@@ -34,7 +44,7 @@ public class GameManager
 	
 	public char[][] getUpdatedFloor()
 	{
-		char[][] floor = new char[21][79];
+		char[][] floor = new char[floorWidth][floorHeight];
 		for(int x = 0; x < floor.length; x++)
 		{
 			for(int y = 0; y < floor[x].length; y++)

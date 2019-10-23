@@ -23,15 +23,19 @@ public class GameWindow
 {
 	private JFrame window;
 	private static final int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
-	private char[][] floor = new char[21][79];
+	private int floorWidth, floorHeight;
+	private char[][] floor;
 	private GameManager GM;
-	private JLabel floorLabel;
-	private JLabel messageLabel = new JLabel();
+	private JLabel floorLabel, messageLabel;
 	private ArrayList<String> messages = new ArrayList<String>();
 
 	public GameWindow(GameManager GM)
 	{
 		this.GM = GM;
+		floorWidth = GM.getFloorWidth();
+		floorHeight = GM.getFloorHeight();
+		floor = new char[floorWidth][floorHeight];
+		messageLabel = new JLabel();
 		makeWindow();
 		loadLevel("a");
 		JTextField text = makeJTextField();
