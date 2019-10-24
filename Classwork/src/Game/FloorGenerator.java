@@ -1,5 +1,9 @@
 package Game;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+
 public class FloorGenerator 
 {
 	private int floorWidth, floorHeight;
@@ -24,10 +28,23 @@ public class FloorGenerator
 		}
 		for(int x = 0; x < floorWidth; x++)
 		{
+			String line = "";
 			for(int y = 1; y < floorHeight; y++)
 			{
-				floor[][];
+				floor[x][y] = '.';
+				line += floor[x][y];
 			}
+			
+		}
+		PrintWriter writer = new PrintWriter("the-file-name.txt", "UTF-8");
+		for(int x = 0; x < floorWidth; x++)
+		{
+			String line = "";
+			for(int y = 0; y < floorHeight; y++)
+			{
+				line += floor[x][y];
+			}
+			
 		}
 		return floor;
 	}

@@ -6,7 +6,7 @@ import Game.GameObjects.Wall;
 
 public class GameManager 
 {
-	private static final int floorWidth = 21, floorHeight = 79;
+	private static final int floorWidth = 22, floorHeight = 79;
 	private GameWindow GW;
 	private GameObject[][] floor = new GameObject[floorWidth][floorHeight];
 	private int playerX, playerY;
