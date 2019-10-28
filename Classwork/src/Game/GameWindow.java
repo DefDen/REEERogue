@@ -175,5 +175,7 @@ public class GameWindow
 	public static void main(String args[]) throws FileNotFoundException
 	{
 		GameManager GM = new GameManager();
+		FloorGenerator FG = new FloorGenerator(WINDOW_WIDTH, WINDOW_HEIGHT);
+		FG.generateFloorFile("b");
 	}
 }
