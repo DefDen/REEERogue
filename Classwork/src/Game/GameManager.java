@@ -2,6 +2,8 @@ package Game;
 
 import Game.GameObjects.EmptySpace;
 import Game.GameObjects.Player;
+import Game.GameObjects.StairsDown;
+import Game.GameObjects.StairsUp;
 import Game.GameObjects.Wall;
 
 public class GameManager 
@@ -93,6 +95,7 @@ public class GameManager
 			case '9':
 				r = move(-1, 1);
 				break;
+				
 		}
 		return r;
 	}
@@ -134,6 +137,12 @@ public class GameManager
 				
 			case '#':
 				return new Wall();
+				
+			case '>':
+				return new StairsDown();
+				
+			case '<':
+				return new StairsUp();			
 				
 			default:
 				return new EmptySpace();

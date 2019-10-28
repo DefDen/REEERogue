@@ -1,5 +1,6 @@
 package Game;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -9,7 +10,7 @@ import java.io.UnsupportedEncodingException;
 
 public class FloorGenerator 
 {
-	private int floorWidth, floorHeight;
+	private int floorWidth, floorHeight, floorNum = 0;
 	
 	public FloorGenerator(int floorWidth, int floorHeight)
 	{
@@ -17,40 +18,68 @@ public class FloorGenerator
 		this.floorHeight = floorHeight;
 	}
 	
-	public char[][] generate()
+	private char[][] generate()
 	{
 		return generate(floorWidth, floorHeight);
 	}
 	
-	public char[][] generate(int floorWidth, int floorHeight)
+	private char[][] generate(int floorWidth, int floorHeight)
 	{
 		char[][] floor = new char[floorWidth][floorHeight];
-		for(int x = 0; x < floorWidth; x++)
+		for(int x = 0; x < floorHeight; x++)
 		{
-			floor[x][0] = '#';
+			floor[0][x] = '#';
 		}
-		for(int x = 0; x < floorWidth; x++)
+		for(int x = 0; x < floorHeight; x++)
 		{
-			for(int y = 1; y < floorHeight; y++)
+			for(int y = 1; y < floorWidth; y++)
 			{
-				floor[x][y] = '.';
+				floor[y][x] = '.';
 			}
 			
 		}
 		return floor;
 	}
 	
-	public void generateFloorFile(String fileName)
+	private String generateToString()
 	{
-		File file = new File(fileName);
-		FileWriter fr;
-		try
+		char[][] floor = generate();
+		String strFloor = "";
+		for(int x = 0; x < floor.length; x++)
 		{
-			fr = new FileWriter(file);
-			fr.write(generate().toString());
+			for(int y = 0; y < floor[x].length; y++)
+			{
+				strFloor += floor[x][y];
+			}
+			strFloor += "\n";
 		}
-		catch(IOException e)
+		return strFloor;
+	}
+	
+	private void generateFloorFile(String fileName)
+	{
+		BufferedWriter writer;
+		try 
 		{
+			writer = new BufferedWriter(new FileWriter(fileName));
+			writer.write(generateToString());
+			writer.close();
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
 		}
+	}
+	
+	public int getFloorNum()
+	{
+		return floorNum;
+	}
+	
+	public int generateNextFloor()
+	{
+		floorNum++;
+		generateFloorFile("" + floorNum);
+		return floorNum;
 	}
 }
