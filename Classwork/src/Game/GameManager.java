@@ -10,12 +10,16 @@ public class GameManager
 {
 	private static final int floorWidth = 22, floorHeight = 79;
 	private GameWindow GW;
+	private FloorGenerator FG;
 	private GameObject[][] floor = new GameObject[floorWidth][floorHeight];
 	private int playerX, playerY;
+	private GameObject player = new Player();
+	private GameObject underPlayer = new StairsUp();
 
 	public GameManager()
 	{
 		GW = new GameWindow(this);
+		FG = new FloorGenerator(this);
 	}
 	
 	public int getFloorWidth()
@@ -57,51 +61,68 @@ public class GameManager
 		return floor;
 	}
 	
+	private void loadFloor(int floorNum)
+	{
+		GW.loadLevel("" + floorNum);
+	}
+	
 	public String playerMove(char c)
 	{
-		String r = "";
 		switch(c)
 		{
+			//Movement
 			case '1':
-				r = move(1, -1);
-				break;	
+				return move(1, -1);
 				
 			case '2':
-				r = move(1, 0);
-				break;
+				return move(1, 0);
 				
 			case '3':
-				r = move(1, 1);
-				break;
+				return move(1, 1);
 				
 			case '4':
-				r = move(0, -1);
-				break;
+				return move(0, -1);
+				
 			case '5':
-				r = move(0, 0);
-				break;
+				return move(0, 0);
+				
 			case '6':
-				r = move(0, 1);
-				break;
+				return move(0, 1);
 				
 			case '7':
-				r = move(-1, -1);
-				break;
+				return move(-1, -1);
 				
 			case '8':
-				r = move(-1, 0);
-				break;
+				return move(-1, 0);
 				
 			case '9':
-				r = move(-1, 1);
-				break;
+				return move(-1, 1);
 				
+			//Traversing stairs
+			case '>':
+				if(underPlayer.toChar() == '>')
+				{
+					//loadFloor(FG.getFloorNum() + 1);
+					return "You descend the stairs";
+				}
+				return "There are no stairs here";
+				
+			case '<':
+				if(underPlayer.toChar() == '<')
+				{
+					//loadFloor(FG.getFloorNum() - 1);
+					return "You ascend the stairs";
+				}
+				return "There are no stairs here";
+				
+			default: 
+				return "";
 		}
-		return r;
 	}
 
 	private String move(int y, int x)
 	{
+		//No direction
 		if(y == 0 && x == 0)
 		{
 			return "You walk into yourself";
@@ -121,8 +142,10 @@ public class GameManager
 		{
 			return "You hit the " + floor[playerY + y][playerX + x].getName();
 		}
-		floor[playerY + y][playerX + x] = floor[playerY][playerX];
-		floor[playerY][playerX] = new EmptySpace();
+		//Moves properly
+		floor[playerY][playerX] = underPlayer.copy();
+		underPlayer = floor[playerY + y][playerX + x];
+		floor[playerY + y][playerX + x] = player;
 		playerY += y;
 		playerX += x;
 		return "";
@@ -133,7 +156,7 @@ public class GameManager
 		switch(c)
 		{
 			case '@':
-				return new Player();
+				return player;
 				
 			case '#':
 				return new Wall();

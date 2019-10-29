@@ -18,6 +18,12 @@ public class FloorGenerator
 		this.floorHeight = floorHeight;
 	}
 	
+	public FloorGenerator(GameManager GM)
+	{
+		this.floorWidth = GM.getFloorWidth();
+		this.floorHeight = GM.getFloorWidth();
+	}
+	
 	private char[][] generate()
 	{
 		return generate(floorWidth, floorHeight);
@@ -36,7 +42,6 @@ public class FloorGenerator
 			{
 				floor[y][x] = '.';
 			}
-			
 		}
 		return floor;
 	}

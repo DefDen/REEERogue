@@ -1,6 +1,6 @@
 package Game;
 
-public abstract class GameObject 
+public abstract class GameObject
 {
 	protected char id;
 	protected String name;
@@ -17,6 +17,10 @@ public abstract class GameObject
 	public String getName()
 	{
 		return name;
+	}
+	public GameObject copy()
+	{
+		return this;
 	}
 	public int getX()
 	{
