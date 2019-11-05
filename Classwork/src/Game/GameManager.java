@@ -15,6 +15,7 @@ public class GameManager
 	private int playerX, playerY;
 	private GameObject player = new Player();
 	private GameObject underPlayer = new StairsUp();
+	private int isFirstMove = 1;
 
 	public GameManager()
 	{
@@ -103,6 +104,7 @@ public class GameManager
 				if(underPlayer.toChar() == '>')
 				{
 					//loadFloor(FG.getFloorNum() + 1);
+					isFirstMove = 1;
 					return "You descend the stairs";
 				}
 				return "There are no stairs here";
@@ -111,6 +113,7 @@ public class GameManager
 				if(underPlayer.toChar() == '<')
 				{
 					//loadFloor(FG.getFloorNum() - 1);
+					isFirstMove = -1; 
 					return "You ascend the stairs";
 				}
 				return "There are no stairs here";
@@ -132,7 +135,7 @@ public class GameManager
 		{
 			return "You walk into the wall";
 		}
-		//Hits terrain
+		//Hits terrain                                         
 		if(floor[playerY + y][playerX + x].isTerrain())
 		{
 			return "You walk into the " + floor[playerY + y][playerX + x].getName();
@@ -143,7 +146,22 @@ public class GameManager
 			return "You hit the " + floor[playerY + y][playerX + x].getName();
 		}
 		//Moves properly
-		floor[playerY][playerX] = underPlayer.copy();
+		switch (isFirstMove)
+		{
+			case 1:
+				isFirstMove = 0;
+				floor[playerY][playerX] = new StairsUp();
+				break;
+				
+			case -1:
+				isFirstMove = 0;
+				floor[playerY][playerX] = new StairsDown();
+				break;
+				
+			default:
+				floor[playerY][playerX] = underPlayer.copy();
+				break;
+		}
 		underPlayer = floor[playerY + y][playerX + x];
 		floor[playerY + y][playerX + x] = player;
 		playerY += y;
