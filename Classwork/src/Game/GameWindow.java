@@ -160,6 +160,17 @@ public class GameWindow
 		return strFloor;
 	}
 
+	public void updateFloor(char[][] floor)
+	{
+		for(int y = 0; y < floor.length; y++)
+		{
+			for(int x = 0; x < floor[y].length; x++)
+			{
+				this.floor[y][x] = floor[y][x];
+			}
+		}
+	}
+	
 	public void printSample()
 	{
 		for(int x = 0; x < floor.length; x++)

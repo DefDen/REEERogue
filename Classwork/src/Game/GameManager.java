@@ -69,35 +69,45 @@ public class GameManager
 	
 	public String playerMove(char c)
 	{
+		String message = "";
 		switch(c)
 		{
 			//Movement
 			case '1':
-				return move(1, -1);
+				message = move(1, -1);
+				break;
 				
 			case '2':
-				return move(1, 0);
+				message = move(1, 0);
+				break;
 				
 			case '3':
-				return move(1, 1);
+				message = move(1, 1);
+				break;
 				
 			case '4':
-				return move(0, -1);
+				message = move(0, -1);
+				break;
 				
 			case '5':
-				return move(0, 0);
+				message = move(0, 0);
+				break;
 				
 			case '6':
-				return move(0, 1);
+				message = move(0, 1);
+				break;
 				
 			case '7':
-				return move(-1, -1);
+				message = move(-1, -1);
+				break;
 				
 			case '8':
-				return move(-1, 0);
+				message = move(-1, 0);
+				break;
 				
 			case '9':
-				return move(-1, 1);
+				message = move(-1, 1);
+				break;
 				
 			//Traversing stairs
 			case '>':
@@ -105,22 +115,29 @@ public class GameManager
 				{
 					//loadFloor(FG.getFloorNum() + 1);
 					isFirstMove = 1;
-					return "You descend the stairs";
+					message = "You descend the stairs";
+					break;
 				}
-				return "There are no stairs here";
+				message = "There are no stairs here";
+				break;
 				
 			case '<':
 				if(underPlayer.toChar() == '<')
 				{
 					//loadFloor(FG.getFloorNum() - 1);
 					isFirstMove = -1; 
-					return "You ascend the stairs";
+					message = "You ascend the stairs";
+					break;
 				}
-				return "There are no stairs here";
+				message = "There are no stairs here";
+				break;
 				
 			default: 
-				return "";
+				message = "";
+				break;
 		}
+		GW.updateFloor(getUpdatedFloor());
+		return message;
 	}
 
 	private String move(int y, int x)
@@ -166,6 +183,14 @@ public class GameManager
 		floor[playerY + y][playerX + x] = player;
 		playerY += y;
 		playerX += x;
+		for(GameObject[] gx : floor)
+		{
+			for(GameObject gy : gx)
+			{
+				System.out.print(gy.toChar());
+			}
+			System.out.println();
+		}
 		return "";
 	}
 	
