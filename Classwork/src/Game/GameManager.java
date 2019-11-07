@@ -97,7 +97,7 @@ public class GameManager
 		text.addKeyListener(listener);
 		return text;
 	}
-
++
 	private void updateMessage(String message)
 	{
 		messages.add(message);
