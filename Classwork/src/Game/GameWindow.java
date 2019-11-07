@@ -183,9 +183,4 @@ public class GameWindow
 		}
 	}
 
-	public static void main(String args[]) throws FileNotFoundException
-	{
-		FloorGenerator FG = new FloorGenerator(21, 79);
-		GameManager GM = new GameManager();
-	}
 }
