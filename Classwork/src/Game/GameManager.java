@@ -24,7 +24,7 @@ public class GameManager
 {
 	private static final int floorWidth = 22, floorHeight = 79, WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
 	private GameObject[][] floor = new GameObject[floorWidth][floorHeight];
-	private int playerX, playerY, isFirstMove = 1;
+	private int playerX, playerY;
 	private JFrame window;
 	private JLabel floorLabel, messageLabel;
 	private ArrayList<String> messages = new ArrayList<String>();
@@ -97,7 +97,7 @@ public class GameManager
 		text.addKeyListener(listener);
 		return text;
 	}
-+
+
 	private void updateMessage(String message)
 	{
 		messages.add(message);
@@ -234,7 +234,6 @@ public class GameManager
 				if(underPlayer.toChar() == '>')
 				{
 					//loadFloor(FG.getFloorNum() + 1);
-					isFirstMove = 1;
 					message = "You descend the stairs";
 					break;
 				}
@@ -245,7 +244,6 @@ public class GameManager
 				if(underPlayer.toChar() == '<')
 				{
 					//loadFloor(FG.getFloorNum() - 1);
-					isFirstMove = -1; 
 					message = "You ascend the stairs";
 					break;
 				}
@@ -258,7 +256,7 @@ public class GameManager
 		}
 		return message;
 	}
-	
+
 	private String move(int y, int x)
 	{
 		//No direction
@@ -281,23 +279,9 @@ public class GameManager
 		{
 			return "You hit the " + floor[playerY + y][playerX + x].getName();
 		}
-		//Moves properly
-		switch (isFirstMove)
-		{
-			case 1:
-				isFirstMove = 0;
-				floor[playerY][playerX] = new StairsUp();
-				break;
-				
-			case -1:
-				isFirstMove = 0;
-				floor[playerY][playerX] = new StairsDown();
-				break;
-				
-			default:
-				floor[playerY][playerX] = underPlayer.copy();
-				break;
-		}
+		
+		//Moves properly		
+		floor[playerY][playerX] = underPlayer.copy();
 		underPlayer = floor[playerY + y][playerX + x].copy();
 		floor[playerY + y][playerX + x] = player;
 		playerY += y;
