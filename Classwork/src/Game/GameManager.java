@@ -24,7 +24,7 @@ public class GameManager
 {
 	private static final int floorWidth = 22, floorHeight = 79, WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
 	private GameObject[][] floor = new GameObject[floorWidth][floorHeight];
-	private int playerX, playerY;
+	private int playerX, playerY, floorNum = 0;
 	private JFrame window;
 	private JLabel floorLabel, messageLabel;
 	private ArrayList<String> messages = new ArrayList<String>();
@@ -35,7 +35,7 @@ public class GameManager
 		messageLabel = new JLabel();
 		makeWindow();
 		loadLevel("a");
-		floorLabel = new JLabel(floorToString(), SwingConstants.CENTER);
+		floorLabel = new JLabel(floorToHTMLString(), SwingConstants.CENTER);
 		JTextField text = makeJTextField();
 		JPanel panel = new JPanel(new BorderLayout());
 		for(int x = 0; x < 2; x++)
@@ -46,7 +46,7 @@ public class GameManager
 		window.add(panel);
 		panel.add(messageLabel, BorderLayout.PAGE_START);
 		panel.add(floorLabel, BorderLayout.CENTER);
-		
+
 		panel.add(text, BorderLayout.PAGE_END);
 		window.pack();
 		window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -87,7 +87,7 @@ public class GameManager
 			{
 				updateMessage(playerMove(event.getKeyChar()));
 				text.setText("");
-				floorLabel.setText(floorToString());
+				floorLabel.setText(floorToHTMLString());
 			}
 			@Override
 			public void keyReleased(KeyEvent event){}
@@ -137,22 +137,30 @@ public class GameManager
 		window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 		window.setVisible(true);
 	}
-	
-	public String floorToString()
+
+	public String floorToHTMLString()
 	{
 		String strFloor = "<html><font face=\"monospace\"";
-		for(int x = 0; x < floor.length; x++)
+		for(GameObject[] gx : floor)
 		{
-			for(int y = 0; y < floor[x].length; y++)
+			for(GameObject gy : gx)
 			{
-				strFloor += floor[x][y].toChar();
+				//Since the string is using HTML formatting, '<' is a special case and is represented as "&lt;"
+				if(gy.toChar() == '<')
+				{
+					strFloor += "&lt;";
+				}
+				else
+				{
+					strFloor += gy.toChar();
+				}
 			}
 			strFloor += "\n<br>";
 		}
 		strFloor += "<html>";
 		return strFloor;
 	}
-	
+
 	public void updateFloor(char[][] charFloor)
 	{
 		for(int y = 0; y < floor.length; y++)
@@ -168,7 +176,7 @@ public class GameManager
 			}
 		}
 	}
-	
+
 	public GameObject[][] charArrayToGameObjectArray(char[][] charFloor)
 	{
 		GameObject[][] r = new GameObject[floorWidth][floorHeight];
@@ -181,78 +189,78 @@ public class GameManager
 		}
 		return r;
 	}
-	
+
 	private void loadFloor(int floorNum)
 	{
 		loadLevel("" + floorNum);
 	}
-	
+
 	public String playerMove(char c)
 	{
 		String message = "";
 		switch(c)
 		{
-			//Movement
-			case '1':
-				message = move(1, -1);
-				break;
-				
-			case '2':
-				message = move(1, 0);
-				break;
-				
-			case '3':
-				message = move(1, 1);
-				break;
-				
-			case '4':
-				message = move(0, -1);
-				break;
-				
-			case '5':
-				message = move(0, 0);
-				break;
-				
-			case '6':
-				message = move(0, 1);
-				break;
-				
-			case '7':
-				message = move(-1, -1);
-				break;
-				
-			case '8':
-				message = move(-1, 0);
-				break;
-				
-			case '9':
-				message = move(-1, 1);
-				break;
-				
+		//Movement
+		case '1':
+			message = move(1, -1);
+			break;
+
+		case '2':
+			message = move(1, 0);
+			break;
+
+		case '3':
+			message = move(1, 1);
+			break;
+
+		case '4':
+			message = move(0, -1);
+			break;
+
+		case '5':
+			message = move(0, 0);
+			break;
+
+		case '6':
+			message = move(0, 1);
+			break;
+
+		case '7':
+			message = move(-1, -1);
+			break;
+
+		case '8':
+			message = move(-1, 0);
+			break;
+
+		case '9':
+			message = move(-1, 1);
+			break;
+
 			//Traversing stairs
-			case '>':
-				if(underPlayer.toChar() == '>')
-				{
-					//loadFloor(FG.getFloorNum() + 1);
-					message = "You descend the stairs";
-					break;
-				}
-				message = "There are no stairs here";
+		case '>':
+			if(underPlayer.toChar() == '>')
+			{
+				floorNum++;
+				message = "You descend the stairs";
 				break;
-				
-			case '<':
-				if(underPlayer.toChar() == '<')
-				{
-					//loadFloor(FG.getFloorNum() - 1);
-					message = "You ascend the stairs";
-					break;
-				}
-				message = "There are no stairs here";
+			}
+			message = "There are no stairs here";
+			break;
+
+		case '<':
+			if(underPlayer.toChar() == '<')
+			{
+				floorNum--;
+				message = "You ascend the stairs";
 				break;
-				
-			default: 
-				message = "";
-				break;
+			}
+			message = "There are no stairs here";
+			break;
+
+		default: 
+			message = "";
+			break;
 		}
 		return message;
 	}
@@ -279,7 +287,7 @@ public class GameManager
 		{
 			return "You hit the " + floor[playerY + y][playerX + x].getName();
 		}
-		
+
 		//Moves properly		
 		floor[playerY][playerX] = underPlayer.copy();
 		underPlayer = floor[playerY + y][playerX + x].copy();
@@ -301,23 +309,23 @@ public class GameManager
 	{
 		switch(c)
 		{
-			case '@':
-				return player;
-				
-			case '#':
-				return new Wall();
-				
-			case '>':
-				return new StairsDown();
-				
-			case '<':
-				return new StairsUp();
-				
-			default:
-				return new EmptySpace();
+		case '@':
+			return player;
+
+		case '#':
+			return new Wall();
+
+		case '>':
+			return new StairsDown();
+
+		case '<':
+			return new StairsUp();
+
+		default:
+			return new EmptySpace();
 		}
 	}
-	
+
 
 	public static void main(String args[])
 	{
