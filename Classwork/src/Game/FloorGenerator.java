@@ -45,7 +45,7 @@ public class FloorGenerator
 		}
 		return floor;
 	}
-	
+
 	private String generateToString()
 	{
 		char[][] floor = generate();
@@ -60,7 +60,7 @@ public class FloorGenerator
 		}
 		return strFloor;
 	}
-	
+
 	private void generateFloorFile(String fileName)
 	{
 		BufferedWriter writer;
@@ -69,18 +69,18 @@ public class FloorGenerator
 			writer = new BufferedWriter(new FileWriter(fileName));
 			writer.write(generateToString());
 			writer.close();
-		} 
+		}
 		catch (IOException e) 
 		{
 			e.printStackTrace();
 		}
 	}
-	
+
 	public int getFloorNum()
 	{
 		return floorNum;
 	}
-	
+
 	public int generateNextFloor()
 	{
 		floorNum++;

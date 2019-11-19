@@ -3,8 +3,11 @@ package Game;
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -34,7 +37,8 @@ public class GameManager
 	{
 		messageLabel = new JLabel();
 		makeWindow();
-		loadLevel("a");
+		loadFloor("a");
+		updateFileToFloor();
 		floorLabel = new JLabel(floorToHTMLString(), SwingConstants.CENTER);
 		JTextField text = makeJTextField();
 		JPanel panel = new JPanel(new BorderLayout());
@@ -52,8 +56,12 @@ public class GameManager
 		window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 	}
 
-	public void loadLevel(String fileName)
+	public void loadFloor(String fileName)
 	{
+		if(!(new File("" + floorNum)).exists())
+		{
+			generateFloorFile("" + floorNum);
+		}
 		try
 		{
 			loadLevel(new File(fileName));
@@ -96,6 +104,21 @@ public class GameManager
 		};
 		text.addKeyListener(listener);
 		return text;
+	}
+
+	private void updateFileToFloor()
+	{
+		(new File("" + floorNum)).delete();
+		try
+		{
+			BufferedWriter writer = new BufferedWriter(new FileWriter("" + floorNum));
+			writer.write(floorToString());
+			writer.close();
+		}
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
 	}
 
 	private void updateMessage(String message)
@@ -161,6 +184,21 @@ public class GameManager
 		return strFloor;
 	}
 
+	public String floorToString()
+	{
+		String strFloor = "";
+		for(GameObject[] gx : floor)
+		{
+			for(GameObject gy : gx)
+			{
+				strFloor += gy.toChar();
+
+			}
+			strFloor += "\n";
+		}
+		return strFloor;
+	}
+
 	public void updateFloor(char[][] charFloor)
 	{
 		for(int y = 0; y < floor.length; y++)
@@ -190,9 +228,58 @@ public class GameManager
 		return r;
 	}
 
-	private void loadFloor(int floorNum)
+	private void generateFloorFile(String fileName)
 	{
-		loadLevel("" + floorNum);
+		try 
+		{
+			BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+			writer.write(generateToString());
+			writer.close();
+		}
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+
+	private char[][] generateBlankFloor()
+	{
+		char[][] floor = new char[floorWidth][floorHeight];
+		for(int x = 0; x < floorHeight; x++)
+		{
+			floor[0][x] = '#';
+		}
+		for(int x = 0; x < floorHeight; x++)
+		{
+			for(int y = 1; y < floorWidth; y++)
+			{
+				floor[y][x] = '.';
+			}
+		}
+		return floor;
+	}
+
+	private char[][] generateNewFloor()
+	{
+		char[][] floor = generateBlankFloor();
+		//Modify floor to procedurally generate
+		floor[2][2] = '@';
+		return floor;
+	}
+
+	private String generateToString()
+	{
+		char[][] floor = generateNewFloor();
+		String strFloor = "";
+		for(int x = 0; x < floor.length; x++)
+		{
+			for(int y = 0; y < floor[x].length; y++)
+			{
+				strFloor += floor[x][y];
+			}
+			strFloor += "\n";
+		}
+		return strFloor;
 	}
 
 	public String playerMove(char c)
@@ -242,6 +329,8 @@ public class GameManager
 			if(underPlayer.toChar() == '>')
 			{
 				floorNum++;
+				loadFloor("" + floorNum);
+				underPlayer = new StairsUp();
 				message = "You descend the stairs";
 				break;
 			}
@@ -252,6 +341,8 @@ public class GameManager
 			if(underPlayer.toChar() == '<')
 			{
 				floorNum--;
+				loadFloor("" + floorNum);
+				underPlayer = new StairsDown();
 				message = "You ascend the stairs";
 				break;
 			}
@@ -262,6 +353,7 @@ public class GameManager
 			message = "";
 			break;
 		}
+		updateFileToFloor();
 		return message;
 	}
 
@@ -325,7 +417,6 @@ public class GameManager
 			return new EmptySpace();
 		}
 	}
-
 
 	public static void main(String args[])
 	{
