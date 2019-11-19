@@ -37,6 +37,7 @@ public class GameManager
 	{
 		messageLabel = new JLabel();
 		makeWindow();
+		deleteAllFloors();
 		loadFloor("a");
 		updateFileToFloor();
 		floorLabel = new JLabel(floorToHTMLString(), SwingConstants.CENTER);
@@ -84,6 +85,14 @@ public class GameManager
 		scan.close();
 	}
 
+	private void deleteAllFloors()
+	{
+		for(int x = -50; x <= 50; x++)
+		{
+			(new File("" + x)).delete();
+		}
+	}
+	
 	private JTextField makeJTextField()
 	{
 		JTextField text = new JTextField("Is it a A?");
@@ -192,7 +201,6 @@ public class GameManager
 			for(GameObject gy : gx)
 			{
 				strFloor += gy.toChar();
-
 			}
 			strFloor += "\n";
 		}
@@ -232,7 +240,7 @@ public class GameManager
 	{
 		try 
 		{
-			BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+			BufferedWriter writer = new BufferedWriter(new FileWriter("" + fileName));
 			writer.write(generateToString());
 			writer.close();
 		}
@@ -263,7 +271,7 @@ public class GameManager
 	{
 		char[][] floor = generateBlankFloor();
 		//Modify floor to procedurally generate
-		floor[2][2] = '@';
+		floor[3][2] = '@';
 		return floor;
 	}
 
