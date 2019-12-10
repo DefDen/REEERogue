@@ -73,6 +73,10 @@ public class ProceduralGeneration
 				case 4:
 					c = (goingDown) ? '>' : '<';
 					break;
+				
+				case 5:
+					c = '.';
+					break;
 				}
 				r[y][x] = c;
 			}
@@ -184,6 +188,11 @@ public class ProceduralGeneration
 	private void makePaths()
 	{
 		ArrayList<Node> path = findPath();
+		for(int x = 0; x < path.size(); x++)
+		{
+			path.get(x).type = 5;
+			locationsByType.get(1).remove(new Location(path.get(x)))
+		}
 	}
 	
 	private ArrayList<Node> findPath()
