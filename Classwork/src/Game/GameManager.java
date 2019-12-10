@@ -373,9 +373,9 @@ public class GameManager
 			if(underPlayer.toChar() == '>')
 			{
 				floorNum++;
+				goingDown = true;
 				loadFloor("" + floorNum);
 				underPlayer = new StairsUp();
-				goingDown = true;
 				message = "You descend the stairs";
 				break;
 			}
@@ -386,9 +386,9 @@ public class GameManager
 			if(underPlayer.toChar() == '<')
 			{
 				floorNum--;
+				goingDown = false;
 				loadFloor("" + floorNum);
 				underPlayer = new StairsDown();
-				goingDown = false;
 				message = "You ascend the stairs";
 				break;
 			}
