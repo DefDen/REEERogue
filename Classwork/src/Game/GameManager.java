@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import Game.GameObjects.EmptySpace;
+import Game.GameObjects.ImpassableWall;
 import Game.GameObjects.Player;
 import Game.GameObjects.StairsDown;
 import Game.GameObjects.StairsUp;
@@ -29,10 +30,11 @@ public class GameManager
 	private GameObject[][] floor = new GameObject[floorWidth][floorHeight];
 	private int playerX, playerY, floorNum = 0;
 	private JFrame window;
-	private JLabel floorLabel, messageLabel;
+	private JLabel floorLabel, messageLabel, statusLabel;
 	private ArrayList<String> messages = new ArrayList<String>();
 	private GameObject player = new Player(), underPlayer = new StairsUp();
 	private ProceduralGeneration PG = new ProceduralGeneration(floorWidth, floorHeight);
+	private boolean goingDown;
 	public static final char[] EXTENDED = { 0x00C7, 0x00FC, 0x00E9, 0x00E2,
             0x00E4, 0x00E0, 0x00E5, 0x00E7, 0x00EA, 0x00EB, 0x00E8, 0x00EF,
             0x00EE, 0x00EC, 0x00C4, 0x00C5, 0x00C9, 0x00E6, 0x00C6, 0x00F4,
@@ -54,10 +56,10 @@ public class GameManager
 	public GameManager()
 	{
 		messageLabel = new JLabel();
+		statusLabel = new JLabel();
 		makeWindow();
 		deleteAllFloors();
 		loadFloor("a");
-		floor[2][2].id = ':';
 		updateFileToFloor();
 		floorLabel = new JLabel(floorToHTMLString(), SwingConstants.CENTER);
 		JTextField text = makeJTextField();
@@ -66,18 +68,20 @@ public class GameManager
 		{
 			messages.add("a");
 		}
+		updateStatus();
 		updateMessage("a");
 		window.add(panel);
 		panel.add(messageLabel, BorderLayout.PAGE_START);
 		panel.add(floorLabel, BorderLayout.CENTER);
+		panel.add(statusLabel, BorderLayout.EAST);
 		panel.add(text, BorderLayout.PAGE_END);
 		window.pack();
 		window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-		PG.GenerateFloor();
+		PG.generateFloor(true);
 		PG.printNodes();
 	}
 
-	public final char getAscii(int code)
+	private final char getAscii(int code)
 	{
         if (code >= 0x80 && code <= 0xFF)
         {
@@ -86,7 +90,7 @@ public class GameManager
         return (char) code;
     }
 
-	public void loadFloor(String fileName)
+	private void loadFloor(String fileName)
 	{
 		if(!(new File("" + floorNum)).exists())
 		{
@@ -159,6 +163,11 @@ public class GameManager
 		}
 	}
 
+	private void updateStatus()
+	{
+		statusLabel.setText("Floor: " + floorNum + " ");
+	}
+	
 	private void updateMessage(String message)
 	{
 		messages.add(message);
@@ -199,7 +208,7 @@ public class GameManager
 		window.setVisible(true);
 	}
 
-	public String floorToHTMLString()
+	private String floorToHTMLString()
 	{
 		String strFloor = "<html><font face=\"monospace\"";
 		for(GameObject[] gx : floor)
@@ -298,9 +307,7 @@ public class GameManager
 
 	private char[][] generateNewFloor()
 	{
-		char[][] floor = generateBlankFloor();
-		//Modify floor to procedurally generate
-		floor[3][2] = '@';
+		char[][] floor = PG.generateFloor(goingDown);
 		return floor;
 	}
 
@@ -368,6 +375,7 @@ public class GameManager
 				floorNum++;
 				loadFloor("" + floorNum);
 				underPlayer = new StairsUp();
+				goingDown = true;
 				message = "You descend the stairs";
 				break;
 			}
@@ -380,6 +388,7 @@ public class GameManager
 				floorNum--;
 				loadFloor("" + floorNum);
 				underPlayer = new StairsDown();
+				goingDown = false;
 				message = "You ascend the stairs";
 				break;
 			}
@@ -391,6 +400,7 @@ public class GameManager
 			break;
 		}
 		updateFileToFloor();
+		updateStatus();
 		return message;
 	}
 
@@ -431,6 +441,7 @@ public class GameManager
 			}
 			System.out.println();
 		}
+		System.out.println();
 		return "";
 	}
 
@@ -449,6 +460,9 @@ public class GameManager
 
 		case '<':
 			return new StairsUp();
+			
+		case '!':
+			return new ImpassableWall();
 
 		default:
 			return new EmptySpace();

@@ -3,6 +3,7 @@ package Game;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Queue;
 
 public class ProceduralGeneration 
 {
@@ -10,6 +11,7 @@ public class ProceduralGeneration
 	private Node[][] nodes;
 	private HashSet<Location> allCovered;
 	private ArrayList<ArrayList<Location>> locationsByType;
+	private boolean goingDown;
 
 	public ProceduralGeneration(int floorWidth, int floorHeight)
 	{
@@ -28,13 +30,14 @@ public class ProceduralGeneration
 		}
 	}
 
-	public char[][] generateFloor()
+	public char[][] generateFloor(boolean goingDown)
 	{
+		this.goingDown = goingDown;
 		reset();
 		generateBlankFloor();
-		makeZones(10, 1);
+		makeZones(1, 1, 1);
 		printNodes();
-		makeZones(10, 2);
+		makeZones(10, 2, 1);
 		printNodes();
 		setStairs();
 		printNodes();
@@ -68,7 +71,7 @@ public class ProceduralGeneration
 					break;
 					
 				case 4:
-					c = '>';
+					c = (goingDown) ? '>' : '<';
 					break;
 				}
 				r[y][x] = c;
@@ -152,13 +155,13 @@ public class ProceduralGeneration
 		}
 	}
 
-	private void makeZones(int num, int type)
+	private void makeZones(int num, int type, int boundarySize)
 	{
 		int y = 0;
 		for(int x = 0; x < num; x++)
 		{
 			
-			Rectangle add = new Rectangle(new Location((int)(floorHeight * Math.random()), (int)(floorWidth * Math.random())), (int)(3 * Math.random() + 3), (int)(3 * Math.random() + 3));
+			Rectangle add = new Rectangle(new Location((int)(floorHeight * Math.random()), (int)(floorWidth * Math.random())), (int)(3 * Math.random() + 3), (int)(3 * Math.random() + 3), boundarySize);
 			if(!add.isValid() || add.intersects(allCovered))
 			{
 				x--;
@@ -174,12 +177,22 @@ public class ProceduralGeneration
 			//				}
 			fillRectangle(add, type);
 			locationsByType.get(type).addAll(add.covered);
-			allCovered.addAll(add.boundry);
+			allCovered.addAll(add.boundary);
 		}
+	}
+	
+	private void makePaths()
+	{
+		ArrayList<Node> path = findPath();
+	}
+	
+	private ArrayList<Node> findPath()
+	{
+		Queue<Node> q = new Queue<Node>();
 	}
 
 	private void setStairs()
-	{
+	{ 
 		for(int x = 3; x < 5; x++)
 		{
 			Location rand = locationsByType.get(1).remove((int)(locationsByType.get(1).size() * Math.random()));
@@ -229,6 +242,8 @@ public class ProceduralGeneration
 	private class Node
 	{
 		private int type;
+		private Node prev;
+		private boolean visited;
 		private Node[] adj = new Node[9];
 
 		private Node(int type)
@@ -239,31 +254,36 @@ public class ProceduralGeneration
 
 	private class Rectangle
 	{
-		private static final int BORDERSIZE = 1;
 		private Location start, end;
-		private int height, width;
-		private HashSet<Location> covered = new HashSet<Location>(), boundry = new HashSet<Location>();
+		private int height, width, boundarySize;
+		private HashSet<Location> covered = new HashSet<Location>(), boundary = new HashSet<Location>();
+		private ArrayList<Location> border = new ArrayList<Location>();
 
-		private Rectangle(Location start, int height, int width)
+		private Rectangle(Location start, int height, int width, int boundarySize)
 		{
 			this.start = new Location(start.y, start.x);
 			this.end = new Location(start.y + height, start.x + width);
 			this.height = height;
 			this.width = width;
+			this.boundarySize = boundarySize;
 
-			for(int y = 0; y <= height; y++)
+			for(int y = 0; y < height; y++)
 			{
-				for(int x = 0; x <= width; x++)
+				for(int x = 0; x < width; x++)
 				{
 					covered.add(new Location(start.y + y, start.x + x));
+					if(y == 0 || y == height - 1 || x == 0 || x == width - 1)
+					{
+						border.add(new Location(start.y + y, start.x + x));
+					}
 				}
 			}
 
-			for(int y = -BORDERSIZE; y < height + BORDERSIZE; y++)
+			for(int y = -boundarySize; y < height + boundarySize; y++)
 			{
-				for(int x = -BORDERSIZE; x < width + BORDERSIZE; x++)
+				for(int x = -boundarySize; x < width + boundarySize; x++)
 				{
-					boundry.add(new Location(start.y + y, start.x + x));
+					boundary.add(new Location(start.y + y, start.x + x));
 				}
 			}
 		}
@@ -279,9 +299,9 @@ public class ProceduralGeneration
 
 		private boolean intersects(Rectangle rect)
 		{
-			for(Location loc : boundry)
+			for(Location loc : boundary)
 			{
-				for(Location loc2 : rect.boundry)
+				for(Location loc2 : rect.boundary)
 					if(loc.equals(loc2))
 					{
 						return true;
@@ -292,7 +312,7 @@ public class ProceduralGeneration
 
 		private boolean intersects(HashSet<Location> allCovered)
 		{
-			for(Location loc : boundry)
+			for(Location loc : boundary)
 			{
 				for(Location loc2 : allCovered)
 					if(loc.equals(loc2))
