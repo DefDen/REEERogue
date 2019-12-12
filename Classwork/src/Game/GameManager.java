@@ -451,6 +451,9 @@ public class GameManager
 		{
 		case '@':
 			return player;
+			
+		case '.':
+			return new EmptySpace();
 
 		case '#':
 			return new Wall();

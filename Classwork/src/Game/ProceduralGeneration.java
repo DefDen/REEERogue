@@ -1,8 +1,8 @@
 package Game;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Queue;
 
 public class ProceduralGeneration 
@@ -11,6 +11,7 @@ public class ProceduralGeneration
 	private Node[][] nodes;
 	private HashSet<Location> allCovered;
 	private ArrayList<ArrayList<Location>> locationsByType;
+	private ArrayList<ArrayList<Rectangle>> rectanglesByType;
 	private boolean goingDown;
 
 	public ProceduralGeneration(int floorWidth, int floorHeight)
@@ -18,12 +19,13 @@ public class ProceduralGeneration
 		this.floorWidth = floorWidth;
 		this.floorHeight = floorHeight;
 	}
-	
+
 	private void reset()
 	{
 		nodes = null;
 		allCovered = new HashSet<Location>();
 		locationsByType = new ArrayList<ArrayList<Location>>();
+		rectanglesByType = new ArrayList<ArrayList<Rectangle>>();
 		for(int x = 0; x < 10; x++)
 		{
 			locationsByType.add(new ArrayList<Location>());
@@ -43,7 +45,7 @@ public class ProceduralGeneration
 		printNodes();
 		return nodesToCharArray();
 	}
-	
+
 	private char[][] nodesToCharArray()
 	{
 		char[][] r = new char[floorWidth][floorHeight];
@@ -57,23 +59,23 @@ public class ProceduralGeneration
 				case 0:
 					c = '#';
 					break;
-				
+
 				case 1:
 					c = '.';
 					break;
-					
+
 				case 2:
 					c = '!';
 					break;
-					
+
 				case 3:
 					c = '@';
 					break;
-					
+
 				case 4:
 					c = (goingDown) ? '>' : '<';
 					break;
-				
+
 				case 5:
 					c = '.';
 					break;
@@ -91,7 +93,7 @@ public class ProceduralGeneration
 		{
 			for(int x = 0; x < nodes[y].length; x++)
 			{
-				nodes[y][x] = new Node(0);
+				nodes[y][x] = new Node(new Location(y, x), 0);
 			}
 		}
 		for(int x = 0; x < nodes.length; x++)
@@ -164,42 +166,91 @@ public class ProceduralGeneration
 		int y = 0;
 		for(int x = 0; x < num; x++)
 		{
-			
+
 			Rectangle add = new Rectangle(new Location((int)(floorHeight * Math.random()), (int)(floorWidth * Math.random())), (int)(3 * Math.random() + 3), (int)(3 * Math.random() + 3), boundarySize);
 			if(!add.isValid() || add.intersects(allCovered))
 			{
 				x--;
 				continue;
 			}
-			//				for(int z = 0; z < allRectangles.size(); z++)
-			//				{
-			//					if(add.intersects(allRectangles.get(z)))
-			//					{
-			//						x--;
-			//						continue;
-			//					}
-			//				}
 			fillRectangle(add, type);
 			locationsByType.get(type).addAll(add.covered);
+			rectanglesByType.get(type).add(add);
 			allCovered.addAll(add.boundary);
 		}
 	}
-	
+
 	private void makePaths()
 	{
-		ArrayList<Node> path = findPath();
-		for(int x = 0; x < path.size(); x++)
+		ArrayList<ArrayList<Node>> paths = new ArrayList<ArrayList<Node>>();
+		ArrayList<Rectangle> visited = new ArrayList<Rectangle>();
+		do
 		{
-			path.get(x).type = 5;
-			locationsByType.get(1).remove(new Location(path.get(x)))
+			for(int x = 0; x < rectanglesByType.get(1).size() - 1; x++)
+			{
+				rectanglesByType.get(1).get(x).connect(rectanglesByType.get(1).get(x + 1));
+				if(!visited.contains(rectanglesByType.get(1).get(x)))
+				{
+					visited.add(rectanglesByType.get(1).get(x));
+				}
+				if(!visited.contains(rectanglesByType.get(1).get(x + 1)))
+				{
+					visited.add(rectanglesByType.get(1).get(x + 1));
+				}
+			}
+		}
+		while(visited.size() != rectanglesByType.get(1).size() && allConnected());
+		for(int x = 0; x < rectanglesByType.get(1).size(); x++)
+		{
+			for(Connection connection : rectanglesByType.get(1).get(x).connections)
+			{
+				paths.add(findPath(connection));
+			}
+		}
+		//do something with paths
+	}
+
+	private ArrayList<Node> findPath(Connection connection)
+	{
+		ArrayList<Node> path = new ArrayList<Node>();
+		Node start = connection.rect1.border.get((int)(connection.rect1.border.size() * Math.random()));
+		Node end = connection.rect2.border.get((int)(connection.rect2.border.size() * Math.random()));
+		Queue<Node> q = new LinkedList<Node>();
+		q.add(start);
+		return findPath(q, end);
+	}
+
+	private ArrayList<Node> findPath(Queue<Node> q, Node end)
+	{
+		Node node = q.remove();
+		for(int x = 0; x < node.adj.length; x++)
+		{
+			                                                                                                                                                                                                                                                                                                     
 		}
 	}
 	
-	private ArrayList<Node> findPath()
+	private boolean allConnected()
 	{
-		Queue<Node> q = new Queue<Node>();
+		ArrayList<Rectangle> visited = new ArrayList<Rectangle>();
+		Queue<Rectangle> q = new LinkedList<Rectangle>();
+		q.add(rectanglesByType.get(1).get(1));
+		return allConnected(q, visited);
 	}
 
+	private boolean allConnected(Queue<Rectangle> q, ArrayList<Rectangle> visited)
+	{
+		if(visited.size() == rectanglesByType.get(1).size())
+		{
+			return true;
+		}
+		if(q.isEmpty())
+		{
+			return false;
+		}
+		q.addAll(q.remove().connected);
+		return allConnected(q, visited);
+	}
+	
 	private void setStairs()
 	{ 
 		for(int x = 3; x < 5; x++)
@@ -253,11 +304,22 @@ public class ProceduralGeneration
 		private int type;
 		private Node prev;
 		private boolean visited;
+		private Location loc;
 		private Node[] adj = new Node[9];
 
-		private Node(int type)
+		private Node(Location loc, int type)
 		{
+			this.loc = loc.copy();
 			this.type = type;
+		}
+		
+		private Node copy()
+		{
+			Node copy = new Node(loc, type);
+			copy.adj = adj;
+			copy.visited = visited;
+			copy.prev = prev;
+			return copy;
 		}
 	}
 
@@ -266,7 +328,9 @@ public class ProceduralGeneration
 		private Location start, end;
 		private int height, width, boundarySize;
 		private HashSet<Location> covered = new HashSet<Location>(), boundary = new HashSet<Location>();
-		private ArrayList<Location> border = new ArrayList<Location>();
+		private ArrayList<Node> border = new ArrayList<Node>();
+		private ArrayList<Rectangle> connected = new ArrayList<Rectangle>();
+		private ArrayList<Connection> connections = new ArrayList<Connection>();
 
 		private Rectangle(Location start, int height, int width, int boundarySize)
 		{
@@ -283,7 +347,7 @@ public class ProceduralGeneration
 					covered.add(new Location(start.y + y, start.x + x));
 					if(y == 0 || y == height - 1 || x == 0 || x == width - 1)
 					{
-						border.add(new Location(start.y + y, start.x + x));
+						border.add(nodes[start.y + y][start.x + x]);
 					}
 				}
 			}
@@ -331,6 +395,18 @@ public class ProceduralGeneration
 			}
 			return false;
 		}
+
+		private boolean connect(Rectangle rect)
+		{
+			if(this.equals(rect) || connected.contains(rect))
+			{
+				return false;
+			}
+			rect.connected.add(this);
+			connected.add(rect);
+			connections.add(new Connection(this, rect));
+			return true;
+		}
 	}
 
 	private class Location
@@ -363,6 +439,22 @@ public class ProceduralGeneration
 				return true;
 			}
 			return false;
+		}
+
+		private Location copy()
+		{
+			return new Location(y, x);
+		}
+	}
+	
+	private class Connection
+	{
+		private Rectangle rect1, rect2;
+		
+		private Connection(Rectangle rect1, Rectangle rect2)
+		{
+			this.rect1 = rect1;
+			this.rect2 = rect2;
 		}
 	}
 }
