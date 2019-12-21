@@ -1,6 +1,7 @@
 package Game;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -29,6 +30,7 @@ public class ProceduralGeneration
 		for(int x = 0; x < 10; x++)
 		{
 			locationsByType.add(new ArrayList<Location>());
+			rectanglesByType.add(new ArrayList<Rectangle>());
 		}
 	}
 
@@ -37,11 +39,13 @@ public class ProceduralGeneration
 		this.goingDown = goingDown;
 		reset();
 		generateBlankFloor();
-		makeZones(1, 1, 1);
+		makeZones(10, 1, 1);
 		printNodes();
-		makeZones(10, 2, 1);
+		makeZones(5, 2, 1);
 		printNodes();
 		setStairs();
+		printNodes();
+		makePaths();
 		printNodes();
 		return nodesToCharArray();
 	}
@@ -75,10 +79,6 @@ public class ProceduralGeneration
 				case 4:
 					c = (goingDown) ? '>' : '<';
 					break;
-
-				case 5:
-					c = '.';
-					break;
 				}
 				r[y][x] = c;
 			}
@@ -93,7 +93,7 @@ public class ProceduralGeneration
 		{
 			for(int x = 0; x < nodes[y].length; x++)
 			{
-				nodes[y][x] = new Node(new Location(y, x), 0);
+				nodes[y][x] = new Node(0, new Location(y, x));
 			}
 		}
 		for(int x = 0; x < nodes.length; x++)
@@ -163,7 +163,6 @@ public class ProceduralGeneration
 
 	private void makeZones(int num, int type, int boundarySize)
 	{
-		int y = 0;
 		for(int x = 0; x < num; x++)
 		{
 
@@ -205,16 +204,29 @@ public class ProceduralGeneration
 			for(Connection connection : rectanglesByType.get(1).get(x).connections)
 			{
 				paths.add(findPath(connection));
+				for(Node[] nodeArr : nodes)
+				{
+					for(Node node1 : nodeArr)
+					{
+						node1.visited = false;
+					}
+				}
 			}
 		}
-		//do something with paths
+		for(ArrayList<Node> path : paths)
+		{
+			for(Node pathNode : path)
+			{
+				locationsByType.get(0).remove(pathNode.loc);
+				pathNode.type = 5;
+			}
+		}
 	}
 
 	private ArrayList<Node> findPath(Connection connection)
 	{
-		ArrayList<Node> path = new ArrayList<Node>();
-		Node start = connection.rect1.border.get((int)(connection.rect1.border.size() * Math.random()));
-		Node end = connection.rect2.border.get((int)(connection.rect2.border.size() * Math.random()));
+		Node start = nodes[connection.rect1.start.y][connection.rect1.start.x];
+		Node end = nodes[connection.rect2.start.y][connection.rect2.start.x];
 		Queue<Node> q = new LinkedList<Node>();
 		q.add(start);
 		return findPath(q, end);
@@ -223,17 +235,37 @@ public class ProceduralGeneration
 	private ArrayList<Node> findPath(Queue<Node> q, Node end)
 	{
 		Node node = q.remove();
+
 		for(int x = 0; x < node.adj.length; x++)
 		{
-			                                                                                                                                                                                                                                                                                                     
+			if(node.adj[x] != null && (node.adj[x].type == 0 || node.adj[x].type == 5) && !node.adj[x].visited)
+			{
+				if(node.adj[x] .equals(end))
+				{
+					return getPath(end, new ArrayList<Node>());
+				}
+				q.add(node.adj[x]);
+				node.adj[x].visited = true;
+			}
 		}
+		return findPath(q, end);
 	}
-	
+
+	private ArrayList<Node> getPath(Node current, ArrayList<Node> path)
+	{
+		if(current.prev == null)
+		{
+			return path;
+		}
+		path.add(current);
+		return getPath(current.prev, path);
+	}
+
 	private boolean allConnected()
 	{
 		ArrayList<Rectangle> visited = new ArrayList<Rectangle>();
 		Queue<Rectangle> q = new LinkedList<Rectangle>();
-		q.add(rectanglesByType.get(1).get(1));
+		q.add(rectanglesByType.get(1).get(0));
 		return allConnected(q, visited);
 	}
 
@@ -250,7 +282,7 @@ public class ProceduralGeneration
 		q.addAll(q.remove().connected);
 		return allConnected(q, visited);
 	}
-	
+
 	private void setStairs()
 	{ 
 		for(int x = 3; x < 5; x++)
@@ -307,19 +339,10 @@ public class ProceduralGeneration
 		private Location loc;
 		private Node[] adj = new Node[9];
 
-		private Node(Location loc, int type)
+		private Node(int type, Location loc)
 		{
-			this.loc = loc.copy();
 			this.type = type;
-		}
-		
-		private Node copy()
-		{
-			Node copy = new Node(loc, type);
-			copy.adj = adj;
-			copy.visited = visited;
-			copy.prev = prev;
-			return copy;
+			this.loc = loc;
 		}
 	}
 
@@ -328,7 +351,6 @@ public class ProceduralGeneration
 		private Location start, end;
 		private int height, width, boundarySize;
 		private HashSet<Location> covered = new HashSet<Location>(), boundary = new HashSet<Location>();
-		private ArrayList<Node> border = new ArrayList<Node>();
 		private ArrayList<Rectangle> connected = new ArrayList<Rectangle>();
 		private ArrayList<Connection> connections = new ArrayList<Connection>();
 
@@ -345,10 +367,6 @@ public class ProceduralGeneration
 				for(int x = 0; x < width; x++)
 				{
 					covered.add(new Location(start.y + y, start.x + x));
-					if(y == 0 || y == height - 1 || x == 0 || x == width - 1)
-					{
-						border.add(nodes[start.y + y][start.x + x]);
-					}
 				}
 			}
 
@@ -359,6 +377,18 @@ public class ProceduralGeneration
 					boundary.add(new Location(start.y + y, start.x + x));
 				}
 			}
+		}
+
+		private boolean connect(Rectangle rect)
+		{
+			if(this.equals(rect) || connected.contains(rect))
+			{
+				return false;
+			}
+			rect.connected.add(this);
+			connected.add(rect);
+			connections.add(new Connection(this, rect));
+			return true;
 		}
 
 		private boolean isValid()
@@ -395,18 +425,6 @@ public class ProceduralGeneration
 			}
 			return false;
 		}
-
-		private boolean connect(Rectangle rect)
-		{
-			if(this.equals(rect) || connected.contains(rect))
-			{
-				return false;
-			}
-			rect.connected.add(this);
-			connected.add(rect);
-			connections.add(new Connection(this, rect));
-			return true;
-		}
 	}
 
 	private class Location
@@ -440,17 +458,12 @@ public class ProceduralGeneration
 			}
 			return false;
 		}
-
-		private Location copy()
-		{
-			return new Location(y, x);
-		}
 	}
-	
+
 	private class Connection
 	{
 		private Rectangle rect1, rect2;
-		
+
 		private Connection(Rectangle rect1, Rectangle rect2)
 		{
 			this.rect1 = rect1;
