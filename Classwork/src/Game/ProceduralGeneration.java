@@ -204,13 +204,6 @@ public class ProceduralGeneration
 			for(Connection connection : rectanglesByType.get(1).get(x).connections)
 			{
 				paths.add(findPath(connection));
-				for(Node[] nodeArr : nodes)
-				{
-					for(Node node1 : nodeArr)
-					{
-						node1.visited = false;
-					}
-				}
 			}
 		}
 		for(ArrayList<Node> path : paths)
@@ -226,26 +219,33 @@ public class ProceduralGeneration
 	private ArrayList<Node> findPath(Connection connection)
 	{
 		Node start = nodes[connection.rect1.start.y][connection.rect1.start.x];
-		Node end = nodes[connection.rect2.start.y][connection.rect2.start.x];
+		for(Node[] nodeArr : nodes)
+		{
+			for(Node node1 : nodeArr)
+			{
+				node1.visited = false;
+			}
+		}
 		Queue<Node> q = new LinkedList<Node>();
+		start.visited = true;
 		q.add(start);
-		return findPath(q, end);
+		return findPath(q, connection.rect2);
 	}
 
-	private ArrayList<Node> findPath(Queue<Node> q, Node end)
+	private ArrayList<Node> findPath(Queue<Node> q, Rectangle end)
 	{
 		Node node = q.remove();
-
+		if(end.covered.contains(node))
+		{
+			return getPath(node, new ArrayList<Node>());
+		}
 		for(int x = 0; x < node.adj.length; x++)
 		{
 			if(node.adj[x] != null && (node.adj[x].type == 0 || node.adj[x].type == 5) && !node.adj[x].visited)
 			{
-				if(node.adj[x] .equals(end))
-				{
-					return getPath(end, new ArrayList<Node>());
-				}
-				q.add(node.adj[x]);
 				node.adj[x].visited = true;
+				node.adj[x].prev = node;
+				q.add(node.adj[x]);
 			}
 		}
 		return findPath(q, end);
