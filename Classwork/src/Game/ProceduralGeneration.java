@@ -39,10 +39,11 @@ public class ProceduralGeneration
 		this.goingDown = goingDown;
 		reset();
 		generateBlankFloor();
+		for(int x = 0; x < nodes[15][15].adj.length; x++)
+		{
+			System.out.println(nodes[15][15].adj[x]);
+		}
 		makeZones(10, 1, 1);
-		printNodes();
-		makeZones(5, 2, 1);
-		printNodes();
 		setStairs();
 		printNodes();
 		makePaths();
@@ -94,6 +95,10 @@ public class ProceduralGeneration
 			for(int x = 0; x < nodes[y].length; x++)
 			{
 				nodes[y][x] = new Node(0, new Location(y, x));
+				if(x == 0)
+				{
+					nodes[y][x].type = 2;
+				}
 			}
 		}
 		for(int x = 0; x < nodes.length; x++)
@@ -102,7 +107,7 @@ public class ProceduralGeneration
 			{
 				for(int i = -1; i < 2; i++)
 				{
-					for(int j = 1; j < 2; j++)
+					for(int j = -1; j < 2; j++)
 					{
 						int z;
 						String check = j + " " + i;
@@ -149,7 +154,10 @@ public class ProceduralGeneration
 						}
 						try
 						{
-							nodes[y][x].adj[z] = nodes[y + j][x + i];
+							if(nodes[y + j][x + i].type != 2)
+							{
+								nodes[y][x].adj[z] = nodes[y + j][x + i];
+							}
 						}
 						catch(Exception e)
 						{
@@ -165,8 +173,7 @@ public class ProceduralGeneration
 	{
 		for(int x = 0; x < num; x++)
 		{
-
-			Rectangle add = new Rectangle(new Location((int)(floorHeight * Math.random()), (int)(floorWidth * Math.random())), (int)(3 * Math.random() + 3), (int)(3 * Math.random() + 3), boundarySize);
+			Rectangle add = new Rectangle(new Location((int)(floorHeight * Math.random()), (int)(floorWidth * Math.random() + 1)), (int)(3 * Math.random() + 3), (int)(3 * Math.random() + 3), boundarySize);
 			if(!add.isValid() || add.intersects(allCovered))
 			{
 				x--;
@@ -218,7 +225,7 @@ public class ProceduralGeneration
 
 	private ArrayList<Node> findPath(Connection connection)
 	{
-		Node start = nodes[connection.rect1.start.y][connection.rect1.start.x];
+		Node start = nodes[connection.rect1.start.y + (int)(Math.random() * connection.rect1.height)][connection.rect1.start.x + (int)(Math.random() * connection.rect1.width)];
 		for(Node[] nodeArr : nodes)
 		{
 			for(Node node1 : nodeArr)
@@ -235,18 +242,25 @@ public class ProceduralGeneration
 	private ArrayList<Node> findPath(Queue<Node> q, Rectangle end)
 	{
 		Node node = q.remove();
-		if(end.covered.contains(node))
+		node.visited = true;
+		if(end.boundary.contains(node.loc)
 		{
+			printNodesVisited();
 			return getPath(node, new ArrayList<Node>());
 		}
 		for(int x = 0; x < node.adj.length; x++)
 		{
 			if(node.adj[x] != null && (node.adj[x].type == 0 || node.adj[x].type == 5) && !node.adj[x].visited)
 			{
-				node.adj[x].visited = true;
 				node.adj[x].prev = node;
+				node.adj[x].visited = true;
 				q.add(node.adj[x]);
 			}
+		}
+		if(q.size() == 0)
+		{
+			printNodesVisited();
+			return getPath(node, new ArrayList<Node>());
 		}
 		return findPath(q, end);
 	}
@@ -325,6 +339,34 @@ public class ProceduralGeneration
 			for(int inner : outer)
 			{
 				System.out.print(inner);
+			}
+			System.out.println();
+		}
+		System.out.println();
+	}
+
+	private void printNodesVisited()
+	{
+		Node[][] r = new Node[floorWidth][floorHeight];
+		for(int x = 0; x < nodes.length; x++)
+		{
+			for(int y = 0; y < nodes[x].length; y++)
+			{
+				r[y][x] = nodes[x][y];
+			}
+		}
+		for(Node[] outer : r)
+		{
+			for(Node inner : outer)
+			{
+				if(inner.type != 0)
+				{
+					System.out.print(2);
+				}
+				else
+				{
+					System.out.print(inner.visited ? 1 : 0);
+				}
 			}
 			System.out.println();
 		}
