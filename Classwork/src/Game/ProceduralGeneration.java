@@ -289,6 +289,7 @@ public class ProceduralGeneration
 		}
 		q.addAll(q.remove().connected);
 		return allConnected(q, visited);
+		hello
 	}
 
 	private void setStairs()
