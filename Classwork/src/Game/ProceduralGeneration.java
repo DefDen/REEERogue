@@ -234,25 +234,39 @@ public class ProceduralGeneration
 
 	private ArrayList<Node> findPath(Queue<Node> q, Rectangle end)
 	{
+		printNodesVisited();
+		
 		Node node = q.remove();
+		
 		node.visited = true;
+		
+		
 		if(end.boundary.contains(node.loc))
 		{
 			return getPath(node.prev, new ArrayList<Node>());
 		}
+		if(node.loc.equals(new Location(0, 0)))
+		{
+			return getPath(node.prev, new ArrayList<Node>());
+		}
+		if(node.x == 0 && node.y == 0)
+		{
+			return getPath(node.prev, new ArrayList<Node>());
+		}
+		
 		for(int x = 0; x < node.adj.length; x++)
 		{
 			if(node.adj[x] != null && !node.adj[x].visited)
 			{
+				if(node.adj[x].type == 2 && end.covered.contains(new Location(node.adj[x].loc.x, node.adj[x].loc.y)))
+				{
+					return getPath(node.prev, new ArrayList<Node>());
+				}
 				if(node.adj[x].type == 0 || node.adj[x].type == 5)
 				{
 					node.adj[x].prev = node;
 					node.adj[x].visited = true;
 					q.add(node.adj[x]);
-				}
-				if(node.adj[x].type == 2 && end.covered.contains(node.adj[x].type == 2))
-				{
-					return getPath(node.prev, new ArrayList<Node>());
 				}
 			}
 		}
@@ -369,7 +383,7 @@ public class ProceduralGeneration
 
 	private class Node
 	{
-		private int type;
+		private int type, x, y;
 		private Node prev;
 		private boolean visited;
 		private Location loc;
@@ -379,6 +393,8 @@ public class ProceduralGeneration
 		{
 			this.type = type;
 			this.loc = loc;
+			x = loc.x;
+			y = loc.y;
 		}
 	}
 
