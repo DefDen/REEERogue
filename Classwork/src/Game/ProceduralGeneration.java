@@ -234,22 +234,20 @@ public class ProceduralGeneration
 
 	private ArrayList<Node> findPath(Queue<Node> q, Rectangle end)
 	{
-		printNodesVisited();
+		//printNodesVisited();
 		
 		Node node = q.remove();
 		
 		node.visited = true;
 		
-		
+		for(Node check : end.boundaryNodes)
+		{
+			if(node.loc.equals(check))
+			{
+				return getPath(node.prev, new ArrayList<Node>());
+			}
+		}
 		if(end.boundary.contains(node.loc))
-		{
-			return getPath(node.prev, new ArrayList<Node>());
-		}
-		if(node.loc.equals(new Location(0, 0)))
-		{
-			return getPath(node.prev, new ArrayList<Node>());
-		}
-		if(node.x == 0 && node.y == 0)
 		{
 			return getPath(node.prev, new ArrayList<Node>());
 		}
@@ -402,7 +400,8 @@ public class ProceduralGeneration
 	{
 		private Location start, end;
 		private int height, width, boundarySize;
-		private HashSet<Location> covered = new HashSet<Location>(), boundary = new HashSet<Location>();
+		private ArrayList<Location> covered = new ArrayList<Location>(), boundary = new ArrayList<Location>();
+		private ArrayList<Node> boundaryNodes = new ArrayList<Node>();
 		private ArrayList<Rectangle> connected = new ArrayList<Rectangle>();
 		private ArrayList<Connection> connections = new ArrayList<Connection>();
 
@@ -419,6 +418,7 @@ public class ProceduralGeneration
 				for(int x = -boundarySize; x < width + boundarySize; x++)
 				{
 					boundary.add(new Location(start.y + y, start.x + x));
+					boundaryNodes.add(nodes[start.x + x][start.y + y]);
 				}
 			}
 			
@@ -496,11 +496,7 @@ public class ProceduralGeneration
 
 		private boolean equals(Location loc)
 		{
-			if(y == loc.y && x == loc.x)
-			{
-				return true;
-			}
-			return false;
+			return equals(loc.y, loc.x);
 		}
 
 		private boolean equals(int y, int x)
