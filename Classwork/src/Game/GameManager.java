@@ -29,6 +29,7 @@ public class GameManager
 {
 	private static final int floorWidth = 22, floorHeight = 79, WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
 	private GameObject[][] floor = new GameObject[floorWidth][floorHeight];
+	private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
 	private int playerX, playerY, floorNum = 0;
 	private JFrame window;
 	private JLabel floorLabel, messageLabel, statusLabel;
@@ -400,6 +401,8 @@ public class GameManager
 			message = "";
 			break;
 		}
+		for(Enemy e : enemies)
+			e.move(floor);
 		updateFileToFloor();
 		updateStatus();
 		return message;
@@ -426,7 +429,11 @@ public class GameManager
 		if(floor[playerY + y][playerX + x].isCharacter())
 		{
 			if(floor[playerY + y][playerX + x].hit(1))
+			{
+				String r = "You kill the " + floor[playerY + y][playerX + x].name;
 				floor[playerY + y][playerX + x] = new EmptySpace();
+				return r;
+			}
 			return "You hit the " + floor[playerY + y][playerX + x].getName();
 		}
 
@@ -463,12 +470,14 @@ public class GameManager
 
 		case '<':
 			return new StairsUp();
-			
+
 		case '!':
 			return new ImpassableWall();
 
 		case 'E':
-			return new Enemy();
+			Enemy enemy = new Enemy();
+			enemies.add(enemy);
+			return enemy;
 			
 		default:
 			return new EmptySpace();

@@ -41,8 +41,9 @@ public class ProceduralGeneration
 		this.goingDown = goingDown;
 		reset();
 		generateBlankFloor();
-		makeZones(3, 1, 1);
+		makeZones(4, 1, 1);
 		setStairs();
+		setEnemies(5);
 		printNodes();
 		makePaths();
 		printNodes();
@@ -77,6 +78,10 @@ public class ProceduralGeneration
 
 				case 4:
 					c = (goingDown) ? '>' : '<';
+					break;
+
+				case 6:
+					c = 'E';
 					break;
 				}
 				r[y][x] = c;
@@ -151,7 +156,7 @@ public class ProceduralGeneration
 							z = -1;
 						}
 						try
-						{
+						{							
 							nodes[y][x].adj[z] = nodes[y + j][x + i];
 						}
 						catch(Exception e)
@@ -217,8 +222,8 @@ public class ProceduralGeneration
 			}
 		}
 	}
-	
-	
+
+
 
 	private ArrayList<Node> findPath(Connection connection)
 	{
@@ -226,28 +231,28 @@ public class ProceduralGeneration
 		{
 			try
 			{
-			Node start = nodes[connection.rect1.start.y + (int)(Math.random() * connection.rect1.height)][connection.rect1.start.x + (int)(Math.random() * connection.rect1.width)];
-			for(Node[] nodeArr : nodes)
-			{
-				for(Node node1 : nodeArr)
+				Node start = nodes[connection.rect1.start.y + (int)(Math.random() * connection.rect1.height)][connection.rect1.start.x + (int)(Math.random() * connection.rect1.width)];
+				for(Node[] nodeArr : nodes)
 				{
-					node1.visited = false;
-					node1.distance = Integer.MAX_VALUE;
+					for(Node node1 : nodeArr)
+					{
+						node1.visited = false;
+						node1.distance = Integer.MAX_VALUE;
+					}
 				}
-			}
-			Queue<Node> q = new LinkedList<Node>();
-			Stack<Node> s = new Stack<Node>();
-			//PriorityQueue<Node> pq = new PriorityQueue<Node>();
-			start.visited = true;
-			q.add(start);
-			s.push(start);
-//			for(Node[] node1 : nodes)
-//				for(Node node2 : node1)
-//					pq.add(node2);
-			start.distance = 0;
-//			pq.remove(start);
-//			pq.add(start);
-			return findPath(q, connection.rect2);
+				Queue<Node> q = new LinkedList<Node>();
+				Stack<Node> s = new Stack<Node>();
+				//PriorityQueue<Node> pq = new PriorityQueue<Node>();
+				start.visited = true;
+				q.add(start);
+				s.push(start);
+				//			for(Node[] node1 : nodes)
+				//				for(Node node2 : node1)
+				//					pq.add(node2);
+				start.distance = 0;
+				//			pq.remove(start);
+				//			pq.add(start);
+				return findPath(q, connection.rect2);
 			}
 			catch(Exception e)
 			{
@@ -255,7 +260,7 @@ public class ProceduralGeneration
 			}
 		}
 	}
-	
+
 	private ArrayList<Node> findPath(PriorityQueue<Node> q, Rectangle end)
 	{
 		Node node = q.remove();
@@ -267,24 +272,25 @@ public class ProceduralGeneration
 		//printNodesVisited();
 
 		Node node = q.remove();
-		
+
 		//node.visited = true;
-//
-//		if(end.boundary.contains(node.loc))
-//		{
-//			return getPath(node.prev, new ArrayList<Node>());
-//		}
+		ArrayList<Integer> ints = new ArrayList<Integer>();
+		for(int k = 0; k < 9; k++)
+		{
+			ints.add(k);
+		}
 		for(int x = 0; x < node.adj.length; x++)
 		{
-			if(node.adj[x] != null && !node.adj[x].visited)
+			int randNeighbor = ints.remove((int)(ints.size() * Math.random()));
+			if(node.adj[randNeighbor] != null && !node.adj[randNeighbor].visited)
 			{
-				if(node.adj[x].type == 0 || node.adj[x].type == 5)
+				if(node.adj[randNeighbor].type == 0 || node.adj[randNeighbor].type == 5)
 				{
-					node.adj[x].prev = node;
-					node.adj[x].visited = true;
-					q.add(node.adj[x]);
+					node.adj[randNeighbor].prev = node;
+					node.adj[randNeighbor].visited = true;
+					q.add(node.adj[randNeighbor]);
 				}
-				if(end.start.equals(node.adj[x].loc) || end.end.equals(node.adj[x].loc))
+				if(end.start.equals(node.adj[randNeighbor].loc))
 				{
 					return getPath(node, new ArrayList<Node>());
 				}
@@ -298,13 +304,13 @@ public class ProceduralGeneration
 		//printNodesVisited();
 
 		Node node = q.pop();
-		
+
 		node.visited = true;
-//
-//		if(end.boundary.contains(node.loc))
-//		{
-//			return getPath(node.prev, new ArrayList<Node>());
-//		}
+		//
+		//		if(end.boundary.contains(node.loc))
+		//		{
+		//			return getPath(node.prev, new ArrayList<Node>());
+		//		}
 		for(int x = 0; x < node.adj.length; x++)
 		{
 			if(node.adj[x] != null && !node.adj[x].visited)
@@ -323,7 +329,7 @@ public class ProceduralGeneration
 		}
 		return findPath(q, end);
 	}
-	
+
 	private ArrayList<Node> getPath(Node current, ArrayList<Node> path)
 	{
 		if(current.prev == null)
@@ -362,6 +368,16 @@ public class ProceduralGeneration
 		{
 			Location rand = locationsByType.get(1).remove((int)(locationsByType.get(1).size() * Math.random()));
 			nodes[rand.y][rand.x].type = x;
+			locationsByType.get(x).add(rand);
+		}
+	}
+
+	private void setEnemies(int count)
+	{ 
+		for(int x = 0; x < count; x++)
+		{
+			Location rand = locationsByType.get(1).remove((int)(locationsByType.get(1).size() * Math.random()));
+			nodes[rand.y][rand.x].type = 6;
 			locationsByType.get(x).add(rand);
 		}
 	}
@@ -445,7 +461,7 @@ public class ProceduralGeneration
 			this.type = type;
 			this.loc = loc;
 		}
-		
+
 		private int CompareTo(Node node)
 		{
 			return distance - node.distance;
