@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import Game.GameObjects.EmptySpace;
+import Game.GameObjects.Enemy;
 import Game.GameObjects.ImpassableWall;
 import Game.GameObjects.Player;
 import Game.GameObjects.StairsDown;
@@ -424,6 +425,8 @@ public class GameManager
 		//Attacking character
 		if(floor[playerY + y][playerX + x].isCharacter())
 		{
+			if(floor[playerY + y][playerX + x].hit(1))
+				floor[playerY + y][playerX + x] = new EmptySpace();
 			return "You hit the " + floor[playerY + y][playerX + x].getName();
 		}
 
@@ -464,6 +467,9 @@ public class GameManager
 		case '!':
 			return new ImpassableWall();
 
+		case 'E':
+			return new Enemy();
+			
 		default:
 			return new EmptySpace();
 		}

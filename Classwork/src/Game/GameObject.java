@@ -46,4 +46,8 @@ public abstract class GameObject
 	{
 		return emptySpace;
 	}
+	public boolean hit(int damage) 
+	{
+		return false;
+	}
 }

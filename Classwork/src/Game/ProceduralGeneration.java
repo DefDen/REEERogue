@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Stack;
 
 public class ProceduralGeneration 
 {
@@ -39,7 +41,7 @@ public class ProceduralGeneration
 		this.goingDown = goingDown;
 		reset();
 		generateBlankFloor();
-		makeZones(20, 1, 1);
+		makeZones(3, 1, 1);
 		setStairs();
 		printNodes();
 		makePaths();
@@ -97,9 +99,9 @@ public class ProceduralGeneration
 				}
 			}
 		}
-		for(int x = 0; x < nodes.length; x++)
+		for(int y = 0; y < nodes.length; y++)
 		{
-			for(int y = 0; y < nodes.length; y++)
+			for(int x = 0; x < nodes[y].length; x++)
 			{
 				for(int i = -1; i < 2; i++)
 				{
@@ -215,62 +217,113 @@ public class ProceduralGeneration
 			}
 		}
 	}
+	
+	
 
 	private ArrayList<Node> findPath(Connection connection)
 	{
-		Node start = nodes[connection.rect1.start.y + (int)(Math.random() * connection.rect1.height)][connection.rect1.start.x + (int)(Math.random() * connection.rect1.width)];
-		for(Node[] nodeArr : nodes)
+		while(true)
 		{
-			for(Node node1 : nodeArr)
+			try
 			{
-				node1.visited = false;
+			Node start = nodes[connection.rect1.start.y + (int)(Math.random() * connection.rect1.height)][connection.rect1.start.x + (int)(Math.random() * connection.rect1.width)];
+			for(Node[] nodeArr : nodes)
+			{
+				for(Node node1 : nodeArr)
+				{
+					node1.visited = false;
+					node1.distance = Integer.MAX_VALUE;
+				}
+			}
+			Queue<Node> q = new LinkedList<Node>();
+			Stack<Node> s = new Stack<Node>();
+			//PriorityQueue<Node> pq = new PriorityQueue<Node>();
+			start.visited = true;
+			q.add(start);
+			s.push(start);
+//			for(Node[] node1 : nodes)
+//				for(Node node2 : node1)
+//					pq.add(node2);
+			start.distance = 0;
+//			pq.remove(start);
+//			pq.add(start);
+			return findPath(q, connection.rect2);
+			}
+			catch(Exception e)
+			{
+				continue;
 			}
 		}
-		Queue<Node> q = new LinkedList<Node>();
-		start.visited = true;
-		q.add(start);
-		return findPath(q, connection.rect2);
+	}
+	
+	private ArrayList<Node> findPath(PriorityQueue<Node> q, Rectangle end)
+	{
+		Node node = q.remove();
+		return null;
 	}
 
 	private ArrayList<Node> findPath(Queue<Node> q, Rectangle end)
 	{
 		//printNodesVisited();
-		
+
 		Node node = q.remove();
 		
-		node.visited = true;
-		
-		for(Node check : end.boundaryNodes)
-		{
-			if(node.loc.equals(check))
-			{
-				return getPath(node.prev, new ArrayList<Node>());
-			}
-		}
-		if(end.boundary.contains(node.loc))
-		{
-			return getPath(node.prev, new ArrayList<Node>());
-		}
-		
+		//node.visited = true;
+//
+//		if(end.boundary.contains(node.loc))
+//		{
+//			return getPath(node.prev, new ArrayList<Node>());
+//		}
 		for(int x = 0; x < node.adj.length; x++)
 		{
 			if(node.adj[x] != null && !node.adj[x].visited)
 			{
-				if(node.adj[x].type == 2 && end.covered.contains(new Location(node.adj[x].loc.x, node.adj[x].loc.y)))
-				{
-					return getPath(node.prev, new ArrayList<Node>());
-				}
 				if(node.adj[x].type == 0 || node.adj[x].type == 5)
 				{
 					node.adj[x].prev = node;
 					node.adj[x].visited = true;
 					q.add(node.adj[x]);
 				}
+				if(end.start.equals(node.adj[x].loc) || end.end.equals(node.adj[x].loc))
+				{
+					return getPath(node, new ArrayList<Node>());
+				}
 			}
 		}
 		return findPath(q, end);
 	}
 
+	private ArrayList<Node> findPath(Stack<Node> q, Rectangle end)
+	{
+		//printNodesVisited();
+
+		Node node = q.pop();
+		
+		node.visited = true;
+//
+//		if(end.boundary.contains(node.loc))
+//		{
+//			return getPath(node.prev, new ArrayList<Node>());
+//		}
+		for(int x = 0; x < node.adj.length; x++)
+		{
+			if(node.adj[x] != null && !node.adj[x].visited)
+			{
+				if(node.adj[x].type == 0 || node.adj[x].type == 5)
+				{
+					node.adj[x].prev = node;
+					//node.adj[x].visited = true;
+					q.push(node.adj[x]);
+				}
+				if(end.start.equals(node.adj[x].loc) || end.end.equals(node.adj[x].loc))
+				{
+					return getPath(node, new ArrayList<Node>());
+				}
+			}
+		}
+		return findPath(q, end);
+	}
+	
 	private ArrayList<Node> getPath(Node current, ArrayList<Node> path)
 	{
 		if(current.prev == null)
@@ -381,7 +434,7 @@ public class ProceduralGeneration
 
 	private class Node
 	{
-		private int type, x, y;
+		private int type, distance;
 		private Node prev;
 		private boolean visited;
 		private Location loc;
@@ -391,8 +444,11 @@ public class ProceduralGeneration
 		{
 			this.type = type;
 			this.loc = loc;
-			x = loc.x;
-			y = loc.y;
+		}
+		
+		private int CompareTo(Node node)
+		{
+			return distance - node.distance;
 		}
 	}
 
@@ -400,8 +456,7 @@ public class ProceduralGeneration
 	{
 		private Location start, end;
 		private int height, width, boundarySize;
-		private ArrayList<Location> covered = new ArrayList<Location>(), boundary = new ArrayList<Location>();
-		private ArrayList<Node> boundaryNodes = new ArrayList<Node>();
+		private HashSet<Location> covered = new HashSet<Location>(), boundary = new HashSet<Location>();
 		private ArrayList<Rectangle> connected = new ArrayList<Rectangle>();
 		private ArrayList<Connection> connections = new ArrayList<Connection>();
 
@@ -418,10 +473,9 @@ public class ProceduralGeneration
 				for(int x = -boundarySize; x < width + boundarySize; x++)
 				{
 					boundary.add(new Location(start.y + y, start.x + x));
-					boundaryNodes.add(nodes[start.x + x][start.y + y]);
 				}
 			}
-			
+
 			for(int y = 0; y < height; y++)
 			{
 				for(int x = 0; x < width; x++)
@@ -496,7 +550,11 @@ public class ProceduralGeneration
 
 		private boolean equals(Location loc)
 		{
-			return equals(loc.y, loc.x);
+			if(y == loc.y && x == loc.x)
+			{
+				return true;
+			}
+			return false;
 		}
 
 		private boolean equals(int y, int x)
