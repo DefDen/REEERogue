@@ -43,7 +43,7 @@ public class ProceduralGeneration
 		generateBlankFloor();
 		makeZones(4, 1, 1);
 		setStairs();
-		setEnemies(5);
+		//setEnemies(5);
 		printNodes();
 		makePaths();
 		printNodes();

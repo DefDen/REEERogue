@@ -50,4 +50,10 @@ public abstract class GameObject
 	{
 		return false;
 	}
+
+	public void setLocation(int y, int x)
+	{
+		this.y = y;
+		this.x = x;
+	}
 }

@@ -21,6 +21,7 @@ import Game.GameObjects.EmptySpace;
 import Game.GameObjects.Enemy;
 import Game.GameObjects.ImpassableWall;
 import Game.GameObjects.Player;
+import Game.GameObjects.RandomEnemy;
 import Game.GameObjects.StairsDown;
 import Game.GameObjects.StairsUp;
 import Game.GameObjects.Wall;
@@ -253,7 +254,7 @@ public class GameManager
 		{
 			for(int x = 0; x < floor[y].length; x++)
 			{
-				this.floor[y][x] = charToGameObject(charFloor[y][x]);
+				this.floor[y][x] = charToGameObject(charFloor[y][x], y, x);
 				if(charFloor[y][x] == '@')
 				{
 					playerX = x;
@@ -270,7 +271,7 @@ public class GameManager
 		{
 			for(int y = 0; y < floor[x].length; y++)
 			{
-				r[x][y] = charToGameObject(charFloor[x][y]);
+				r[x][y] = charToGameObject(charFloor[x][y], x, y);
 			}
 		}
 		return r;
@@ -331,6 +332,7 @@ public class GameManager
 	public String playerMove(char c)
 	{
 		String message = "";
+		boolean floorChange = false;
 		switch(c)
 		{
 		//Movement
@@ -372,6 +374,7 @@ public class GameManager
 
 			//Traversing stairs
 		case '>':
+			floorChange = true;
 			if(underPlayer.toChar() == '>')
 			{
 				floorNum++;
@@ -385,6 +388,7 @@ public class GameManager
 			break;
 
 		case '<':
+			floorChange = true;
 			if(underPlayer.toChar() == '<')
 			{
 				floorNum--;
@@ -401,9 +405,11 @@ public class GameManager
 			message = "";
 			break;
 		}
-		for(Enemy e : enemies)
-			e.move(floor);
+		if(!floorChange)
+			for(Enemy e : enemies)
+				e.move(floor);
 		updateFileToFloor();
+		
 		updateStatus();
 		return message;
 	}
@@ -431,6 +437,7 @@ public class GameManager
 			if(floor[playerY + y][playerX + x].hit(1))
 			{
 				String r = "You kill the " + floor[playerY + y][playerX + x].name;
+				System.out.println(enemies.remove(floor[playerY + y][playerX + x]));
 				floor[playerY + y][playerX + x] = new EmptySpace();
 				return r;
 			}
@@ -455,7 +462,7 @@ public class GameManager
 		return "";
 	}
 
-	private GameObject charToGameObject(char c)
+	private GameObject charToGameObject(char c, int y, int x)
 	{
 		switch(c)
 		{
@@ -475,9 +482,14 @@ public class GameManager
 			return new ImpassableWall();
 
 		case 'E':
-			Enemy enemy = new Enemy();
+			Enemy enemy = new Enemy(y, x);
 			enemies.add(enemy);
 			return enemy;
+			
+		case 'R':
+			RandomEnemy rEnemy = new RandomEnemy(y, x);
+			enemies.add(rEnemy);
+			return rEnemy;	
 			
 		default:
 			return new EmptySpace();
