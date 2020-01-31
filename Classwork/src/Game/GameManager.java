@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import javax.swing.JFrame;
@@ -28,8 +29,10 @@ import Game.GameObjects.Wall;
 
 public class GameManager 
 {
-	private static final int floorWidth = 22, floorHeight = 79, WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600, FONT_SIZE = 4;
+	private static final int floorWidth = 22, floorHeight = 79, WINDOW_WIDTH = 800, WINDOW_HEIGHT = WINDOW_WIDTH * 3 / 4, FONT_SIZE = 4;
 	private GameObject[][] floor = new GameObject[floorWidth][floorHeight];
+	//private HashMap<Integer, Enemy> enemies = new HashMap<Integer, Enemy>();
+	//private Enemy[] enemies = new Enemy[100];
 	private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
 	private int playerX, playerY, floorNum = 0;
 	private JFrame window;
@@ -385,6 +388,7 @@ public class GameManager
 		case '>':
 			floorChange = true;
 			enemies.clear();
+			//enemies = new Enemy[100];
 			if(underPlayer.toChar() == '>')
 			{
 				floorNum++;
@@ -400,6 +404,7 @@ public class GameManager
 		case '<':
 			floorChange = true;
 			enemies.clear();
+			//enemies = new Enemy[100];
 			if(underPlayer.toChar() == '<')
 			{
 				floorNum--;
@@ -448,6 +453,7 @@ public class GameManager
 			{
 				String r = "You kill the " + floor[playerY + y][playerX + x].name;
 				System.out.println(enemies.remove(floor[playerY + y][playerX + x]));
+				//enemies[floor[playerY + y][playerX + x].getInt()] = null;
 				floor[playerY + y][playerX + x] = new EmptySpace();
 				return r;
 			}
@@ -494,13 +500,15 @@ public class GameManager
 		case 'E':
 			Enemy enemy = new Enemy(y, x);
 			enemies.add(enemy);
+			//enemies[enemy.getInt()] = enemy;
 			return enemy;
 			
 		case 'R':
 			RandomEnemy rEnemy = new RandomEnemy(y, x);
 			enemies.add(rEnemy);
+			//enemies[rEnemy.getInt()] = rEnemy;
 			return rEnemy;	
-			
+
 		default:
 			return new EmptySpace();
 		}

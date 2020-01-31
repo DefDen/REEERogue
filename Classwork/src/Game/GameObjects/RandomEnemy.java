@@ -6,8 +6,6 @@ import Game.GameObject;
 
 public class RandomEnemy extends Enemy
 {
-	
-	
 	public RandomEnemy()
 	{
 		super();
@@ -102,6 +100,11 @@ public class RandomEnemy extends Enemy
 	
 	public String move(GameObject[][] floor)
 	{
+		if(health == 0)
+		{
+			System.out.println("Should be dead");
+			return "";
+		}
 		for(GameObject g : getNeighbors(floor))
 			if(g.isPlayer())
 			{

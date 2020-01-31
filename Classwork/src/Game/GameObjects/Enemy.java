@@ -7,7 +7,7 @@ import Game.GameObject;
 
 public class Enemy extends GameObject
 {
-	protected int health = 1;
+	protected int health = 2;
 	protected static int sharedIdInt = 0;
 	protected int idInt = sharedIdInt;
 
@@ -63,5 +63,10 @@ public class Enemy extends GameObject
 	public String move(GameObject[][] floor)
 	{
 		return "";
+	}
+	
+	public int getInt()
+	{
+		return idInt;
 	}
 }

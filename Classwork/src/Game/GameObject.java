@@ -61,4 +61,9 @@ public abstract class GameObject
 		this.y = y;
 		this.x = x;
 	}
+	
+	public int getInt()
+	{
+		return -1;
+	}
 }
