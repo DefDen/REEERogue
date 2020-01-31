@@ -60,8 +60,8 @@ public class Enemy extends GameObject
 		return new Enemy(y, x, health);
 	}
 
-	public void move(GameObject[][] floor)
+	public String move(GameObject[][] floor)
 	{
-		return;
+		return "";
 	}
 }

@@ -8,12 +8,14 @@ public class Player extends GameObject
 	{
 		id = '@';
 		character = true;
+		player = true;
 	}
 	
 	public Player(int x, int y)
 	{
 		id = '@';
 		character = true;
+		player = true;
 		this.x = x;
 		this.y = y;
 	}

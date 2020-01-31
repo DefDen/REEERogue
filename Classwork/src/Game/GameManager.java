@@ -28,7 +28,7 @@ import Game.GameObjects.Wall;
 
 public class GameManager 
 {
-	private static final int floorWidth = 22, floorHeight = 79, WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
+	private static final int floorWidth = 22, floorHeight = 79, WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600, FONT_SIZE = 4;
 	private GameObject[][] floor = new GameObject[floorWidth][floorHeight];
 	private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
 	private int playerX, playerY, floorNum = 0;
@@ -168,13 +168,13 @@ public class GameManager
 
 	private void updateStatus()
 	{
-		statusLabel.setText("Floor: " + floorNum + " ");
+		statusLabel.setText("<html><font size=\"" +  FONT_SIZE + "\">Floor: " + floorNum + " ");
 	}
 	
 	private void updateMessage(String message)
 	{
 		messages.add(message);
-		String curMessage = "<html><font face=\"monospace\"\n<br>";
+		String curMessage = "<html><font face=\"monospace\"<font size=\"" +  FONT_SIZE + "\">\n<br>";
 		for(int x = 3; x > 0; x--)
 		{
 			if(messages.get(messages.size() - x).equals("a"))
@@ -213,7 +213,7 @@ public class GameManager
 
 	private String floorToHTMLString()
 	{
-		String strFloor = "<html><font face=\"monospace\"";
+		String strFloor = "<html><font face=\"monospace\"<font size=\"" +  FONT_SIZE + "\">";
 		for(GameObject[] gx : floor)
 		{
 			for(GameObject gy : gx)
@@ -336,38 +336,47 @@ public class GameManager
 		switch(c)
 		{
 		//Movement
+		case 'z':
 		case '1':
 			message = move(1, -1);
 			break;
 
+		case 'x':
 		case '2':
 			message = move(1, 0);
 			break;
 
+		case 'c':
 		case '3':
 			message = move(1, 1);
 			break;
 
+		case 'a':
 		case '4':
 			message = move(0, -1);
 			break;
 
+		case 's':
 		case '5':
 			message = move(0, 0);
 			break;
 
+		case 'd':
 		case '6':
 			message = move(0, 1);
 			break;
 
+		case 'q':
 		case '7':
 			message = move(-1, -1);
 			break;
 
+		case 'w':
 		case '8':
 			message = move(-1, 0);
 			break;
 
+		case 'e':
 		case '9':
 			message = move(-1, 1);
 			break;

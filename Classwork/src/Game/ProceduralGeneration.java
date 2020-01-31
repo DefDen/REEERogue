@@ -102,10 +102,6 @@ public class ProceduralGeneration
 			for(int x = 0; x < nodes[y].length; x++)
 			{
 				nodes[y][x] = new Node(0, new Location(y, x));
-				if(x == 0)
-				{
-					nodes[y][x].type = 2;
-				}
 			}
 		}
 		for(int y = 0; y < nodes.length; y++)
@@ -292,11 +288,13 @@ public class ProceduralGeneration
 				{
 					node.adj[randNeighbor].prev = node;
 					q.add(node.adj[randNeighbor]);
+					//TODO
 					//Attempting to allow the path to make more turns
 					//if((int)(4 * Math.random()) == 0)
 						node.adj[randNeighbor].visited = true;
 				}
 				if(end.start.equals(node.adj[randNeighbor].loc))
+				//if(end.coveredNodes.contains(node))
 				{
 					return getPath(node, new ArrayList<Node>());
 				}
@@ -342,6 +340,14 @@ public class ProceduralGeneration
 		{
 			return path;
 		}
+		//TODO
+		//Randomly widen the path 
+//		if((int)(9 * Math.random()) == 0)
+//		{
+//			int rand = (int)(9 * Math.random());
+//			if(current.adj[rand].type == 0)
+//				path.add(current.adj[rand]);
+//		}
 		path.add(current);
 		return getPath(current.prev, path);
 	}
@@ -485,6 +491,7 @@ public class ProceduralGeneration
 		private Location start, end;
 		private int height, width, boundarySize;
 		private HashSet<Location> covered = new HashSet<Location>(), boundary = new HashSet<Location>();
+		private ArrayList<Node> coveredNodes = new ArrayList<Node>();
 		private ArrayList<Rectangle> connected = new ArrayList<Rectangle>();
 		private ArrayList<Connection> connections = new ArrayList<Connection>();
 
@@ -510,6 +517,20 @@ public class ProceduralGeneration
 				{
 					covered.add(new Location(start.y + y, start.x + x));
 					boundary.remove(new Location(start.y + y, start.x + x));
+//					try
+//					{
+//						coveredNodes.add(nodes[start.y + y - 1][start.x + x - 1]);
+//					}
+//					catch(Exception e)
+//					{
+//						System.out.println(start.y + y + " " + (start.x + x));
+//						try {
+//							throw new Exception();
+//						} catch (Exception e1) {
+//							e1.printStackTrace();
+//						}
+//					}
+						
 				}
 			}
 		}
@@ -528,7 +549,7 @@ public class ProceduralGeneration
 
 		private boolean isValid()
 		{
-			if(start.y < 1 || start.x < 2 || end.y >= floorHeight || end.x >= floorWidth)
+			if(start.y < 1 || start.x < 1 || end.y >= floorHeight || end.x >= floorWidth)
 			{
 				return false;
 			}

@@ -9,6 +9,7 @@ public abstract class GameObject
 	protected boolean item = false;
 	protected boolean character = false;
 	protected boolean emptySpace = false;
+	protected boolean player = false;
 
 	public char toChar()
 	{
@@ -45,6 +46,10 @@ public abstract class GameObject
 	public boolean isEmptySpace()
 	{
 		return emptySpace;
+	}
+	public boolean isPlayer()
+	{
+		return player;
 	}
 	public boolean hit(int damage) 
 	{

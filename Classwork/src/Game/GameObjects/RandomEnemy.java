@@ -1,5 +1,7 @@
 package Game.GameObjects;
 
+import java.util.ArrayList;
+
 import Game.GameObject;
 
 public class RandomEnemy extends Enemy
@@ -35,8 +37,77 @@ public class RandomEnemy extends Enemy
 		return new RandomEnemy(y, x, health);
 	}
 	
-	public void move(GameObject[][] floor)
+	private ArrayList<GameObject> getNeighbors(GameObject[][] floor)
 	{
+		ArrayList<GameObject> r = new ArrayList<GameObject>();
+		for(int i = -1; i < 2; i++)
+		{
+			for(int j = -1; j < 2; j++)
+			{
+				int z;
+				String check = j + " " + i;
+				switch(check)
+				{
+				case "-1 -1":
+					z = 6;
+					break;
+
+				case "0 -1":
+					z = 3;
+					break;
+
+				case "1 -1":
+					z = 0;
+					break;
+
+				case "-1 0":
+					z = 7;
+					break;
+
+				case "0 0":
+					z = 4;
+					break;
+
+				case "1 0":
+					z = 1;
+					break;
+
+				case "-1 1":
+					z = 8;
+					break;
+
+				case "0 1":
+					z = 5;
+					break;
+
+				case "1 1":
+					z = 2;
+					break;
+
+				default:
+					z = -1;
+				}
+				try
+				{							
+					r.add(floor[y + j][x + i]);
+				}
+				catch(Exception e)
+				{
+
+				}
+			}
+		}
+		return r;
+	}
+	
+	public String move(GameObject[][] floor)
+	{
+		for(GameObject g : getNeighbors(floor))
+			if(g.isPlayer())
+			{
+				System.out.println("The " + name + " hits you!");
+				return "The " + name + " hits you!";
+			}
 		while(true)
 		{
 			int newY = y + (int)(4 * Math.random() - 2);
@@ -51,7 +122,7 @@ public class RandomEnemy extends Enemy
 				y = newY;
 				x = newX;
 				floor[y][x] = copy();
-				return;
+				return "";
 			}
 		}
 //		GameObject[] neighbors = new GameObject[9];
