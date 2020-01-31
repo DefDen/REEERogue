@@ -287,8 +287,10 @@ public class ProceduralGeneration
 				if(node.adj[randNeighbor].type == 0 || node.adj[randNeighbor].type == 5)
 				{
 					node.adj[randNeighbor].prev = node;
-					node.adj[randNeighbor].visited = true;
 					q.add(node.adj[randNeighbor]);
+					//Attempting to allow the path to make more turns
+					//if((int)(4 * Math.random()) == 0)
+						node.adj[randNeighbor].visited = true;
 				}
 				if(end.start.equals(node.adj[randNeighbor].loc))
 				{
