@@ -375,6 +375,7 @@ public class GameManager
 			//Traversing stairs
 		case '>':
 			floorChange = true;
+			enemies.clear();
 			if(underPlayer.toChar() == '>')
 			{
 				floorNum++;
@@ -389,6 +390,7 @@ public class GameManager
 
 		case '<':
 			floorChange = true;
+			enemies.clear();
 			if(underPlayer.toChar() == '<')
 			{
 				floorNum--;
@@ -409,7 +411,6 @@ public class GameManager
 			for(Enemy e : enemies)
 				e.move(floor);
 		updateFileToFloor();
-		
 		updateStatus();
 		return message;
 	}

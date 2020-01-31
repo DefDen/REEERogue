@@ -4,22 +4,30 @@ import Game.GameObject;
 
 public class RandomEnemy extends Enemy
 {
+	
+	
 	public RandomEnemy()
 	{
 		super();
 		id = 'R';
+		name = "rat";
+		health = 2;
 	}
 
 	public RandomEnemy(int y, int x)
 	{
 		super(y, x);
 		id = 'R';
+		name = "rat";
+		health = 2;
 	}
 
 	public RandomEnemy(int y, int x, int health)
 	{
 		super(y, x, health);
 		id = 'R';
+		name = "rat";
+		health = 2;
 	}
 	
 	public RandomEnemy copy()

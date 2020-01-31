@@ -43,7 +43,7 @@ public class ProceduralGeneration
 		generateBlankFloor();
 		makeZones(4, 1, 1);
 		setStairs();
-		//setEnemies(5);
+		setEnemies(5);
 		printNodes();
 		makePaths();
 		printNodes();
@@ -82,6 +82,10 @@ public class ProceduralGeneration
 
 				case 6:
 					c = 'E';
+					break;
+					
+				case 7:
+					c = 'R';
 					break;
 				}
 				r[y][x] = c;
@@ -380,6 +384,12 @@ public class ProceduralGeneration
 		{
 			Location rand = locationsByType.get(1).remove((int)(locationsByType.get(1).size() * Math.random()));
 			nodes[rand.y][rand.x].type = 6;
+			locationsByType.get(x).add(rand);
+		}
+		for(int x = 0; x < count / 2; x++)
+		{
+			Location rand = locationsByType.get(1).remove((int)(locationsByType.get(1).size() * Math.random()));
+			nodes[rand.y][rand.x].type = 7;
 			locationsByType.get(x).add(rand);
 		}
 	}
