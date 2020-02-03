@@ -6,12 +6,14 @@ import Game.GameObject;
 
 public class RandomEnemy extends Enemy
 {
+	protected static final int HEALTH = 3;
+	
 	public RandomEnemy()
 	{
 		super();
 		id = 'R';
 		name = "rat";
-		health = 2;
+		health = HEALTH;
 	}
 
 	public RandomEnemy(int y, int x)
@@ -19,7 +21,7 @@ public class RandomEnemy extends Enemy
 		super(y, x);
 		id = 'R';
 		name = "rat";
-		health = 2;
+		health = HEALTH;
 	}
 
 	public RandomEnemy(int y, int x, int health)
@@ -27,12 +29,20 @@ public class RandomEnemy extends Enemy
 		super(y, x, health);
 		id = 'R';
 		name = "rat";
-		health = 2;
+		health = HEALTH;
+	}
+	
+	public RandomEnemy(int y, int x, int health, int idInt)
+	{
+		super(y, x, health, idInt);
+		id = 'R';
+		name = "rat";
+		health = HEALTH;
 	}
 	
 	public RandomEnemy copy()
 	{
-		return new RandomEnemy(y, x, health);
+		return new RandomEnemy(y, x, health, idInt);
 	}
 	
 	private ArrayList<GameObject> getNeighbors(GameObject[][] floor)

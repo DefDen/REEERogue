@@ -10,6 +10,7 @@ public class Enemy extends GameObject
 	protected int health = 2;
 	protected static int sharedIdInt = 0;
 	protected int idInt = sharedIdInt;
+	protected boolean dead = false;
 
 	public Enemy()
 	{
@@ -40,6 +41,18 @@ public class Enemy extends GameObject
 		sharedIdInt++;
 	}
 	
+	public Enemy(int y, int x, int health, int idInt)
+	{
+		id = 'E';
+		character = true;
+		name = "enemy";
+		this.x = x;
+		this.y = y;
+		this.health = health;
+		this.idInt = idInt;
+		sharedIdInt++;
+	}
+	
 	public boolean equals(Enemy e)
 	{
 		return idInt == e.idInt;
@@ -47,12 +60,13 @@ public class Enemy extends GameObject
 	
 	public boolean hit(int damage)
 	{
-		health--;
+		health -= damage;
 		if(health < 1)
 		{
-			return true;
+			dead = true;
+			return dead;
 		}
-		return false;
+		return dead;
 	}
 	
 	public Enemy copy()
@@ -68,5 +82,10 @@ public class Enemy extends GameObject
 	public int getInt()
 	{
 		return idInt;
+	}
+	
+	public boolean isDead()
+	{
+		return dead;
 	}
 }

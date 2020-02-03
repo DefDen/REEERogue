@@ -29,8 +29,8 @@ import Game.GameObjects.Wall;
 
 public class GameManager 
 {
-	private static final int floorWidth = 22, floorHeight = 79, WINDOW_WIDTH = 800, WINDOW_HEIGHT = WINDOW_WIDTH * 3 / 4, FONT_SIZE = 4;
-	private GameObject[][] floor = new GameObject[floorWidth][floorHeight];
+	private static final int FLOOR_WIDTH = 22, FLOOR_HEIGHT = 79, WINDOW_WIDTH = 800, WINDOW_HEIGHT = WINDOW_WIDTH * 3 / 4, FONT_SIZE = 4;
+	private GameObject[][] floor = new GameObject[FLOOR_WIDTH][FLOOR_HEIGHT];
 	//private HashMap<Integer, Enemy> enemies = new HashMap<Integer, Enemy>();
 	//private Enemy[] enemies = new Enemy[100];
 	private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
@@ -39,7 +39,7 @@ public class GameManager
 	private JLabel floorLabel, messageLabel, statusLabel;
 	private ArrayList<String> messages = new ArrayList<String>();
 	private GameObject player = new Player(), underPlayer = new StairsUp();
-	private ProceduralGeneration PG = new ProceduralGeneration(floorWidth, floorHeight);
+	private ProceduralGeneration PG = new ProceduralGeneration(FLOOR_WIDTH, FLOOR_HEIGHT);
 	private boolean goingDown;
 	public static final char[] EXTENDED = { 0x00C7, 0x00FC, 0x00E9, 0x00E2,
             0x00E4, 0x00E0, 0x00E5, 0x00E7, 0x00EA, 0x00EB, 0x00E8, 0x00EF,
@@ -115,7 +115,7 @@ public class GameManager
 	private void loadLevel(File floorFile) throws FileNotFoundException
 	{
 		Scanner scan = new Scanner(floorFile);
-		char[][] charFloor = new char[floorWidth][floorHeight];
+		char[][] charFloor = new char[FLOOR_WIDTH][FLOOR_HEIGHT];
 		for(int x = 0; scan.hasNextLine(); x++)
 		{
 			charFloor[x] = scan.nextLine().toCharArray();
@@ -269,7 +269,7 @@ public class GameManager
 
 	public GameObject[][] charArrayToGameObjectArray(char[][] charFloor)
 	{
-		GameObject[][] r = new GameObject[floorWidth][floorHeight];
+		GameObject[][] r = new GameObject[FLOOR_WIDTH][FLOOR_HEIGHT];
 		for(int x = 0; x < floor.length; x++)
 		{
 			for(int y = 0; y < floor[x].length; y++)
@@ -296,14 +296,14 @@ public class GameManager
 
 	private char[][] generateBlankFloor()
 	{
-		char[][] floor = new char[floorWidth][floorHeight];
-		for(int x = 0; x < floorHeight; x++)
+		char[][] floor = new char[FLOOR_WIDTH][FLOOR_HEIGHT];
+		for(int x = 0; x < FLOOR_HEIGHT; x++)
 		{
 			floor[0][x] = '#';
 		}
-		for(int x = 0; x < floorHeight; x++)
+		for(int x = 0; x < FLOOR_HEIGHT; x++)
 		{
-			for(int y = 1; y < floorWidth; y++)
+			for(int y = 1; y < FLOOR_WIDTH; y++)
 			{
 				floor[y][x] = '.';
 			}
@@ -422,8 +422,17 @@ public class GameManager
 			break;
 		}
 		if(!floorChange)
-			for(Enemy e : enemies)
+			for(int x = 0; x < enemies.size(); x++)
+			{
+				Enemy e = enemies.get(x);
+				if(e.isDead())
+				{
+					enemies.remove(x);
+					x--;
+					continue;
+				}
 				e.move(floor);
+			}
 		updateFileToFloor();
 		updateStatus();
 		return message;
